@@ -1,0 +1,3289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#14110d" />
+<title>HIDUP DI KONOHA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ece6d8;
+    --bg-2: #d9cfb8;
+    --ink: #14110d;
+    --ink-soft: #3a342a;
+    --paper: #f5efe1;
+    --red: #c8261e;
+    --green: #2d6a3a;
+    --gold: #b9881d;
+    --blue: #1b3a78;
+    --magenta: #a8246b;
+    --stress: #d94a1a;
+    --shadow: 4px 4px 0 var(--ink);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    touch-action: manipulation;
+  }
+  body {
+    background-image:
+      repeating-linear-gradient(0deg, rgba(20,17,13,0.025) 0, rgba(20,17,13,0.025) 1px, transparent 1px, transparent 3px),
+      radial-gradient(ellipse at top left, #f0e8d2, var(--bg) 70%);
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  #app {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "top top top"
+      "left main right"
+      "bottom bottom bottom";
+    height: 100%;
+    height: 100dvh;
+    max-width: 1700px;
+    margin: 0 auto;
+  }
+  .topbar {
+    grid-area: top;
+    background: var(--ink);
+    color: var(--paper);
+    border-bottom: 3px solid var(--red);
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 11px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--red);
+    line-height: 1;
+    cursor: pointer;
+  }
+  .logo span { color: var(--paper); }
+  .top-stat {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    padding-right: 12px;
+    border-right: 1px solid #444;
+  }
+  .top-stat:last-of-type { border-right: none; }
+  .top-stat .label {
+    font-size: 9px;
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .top-stat .value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--paper);
+  }
+  .top-stat .value.money { color: #6dd66d; }
+  .top-stat .value.money.poor { color: #ff8b3d; }
+  .top-stat .value.money.broke { color: var(--red); animation: blink 0.8s infinite; }
+  .top-stat .value.debt { color: #ff6b6b; }
+  .top-stat .value.stress.high { color: #ff8b3d; }
+  .top-stat .value.stress.crit { color: var(--red); animation: blink 0.6s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  .reset-btn {
+    margin-left: auto;
+    background: var(--red);
+    color: var(--paper);
+    border: 1.5px solid var(--paper);
+    padding: 4px 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+  .reset-btn:hover { background: var(--paper); color: var(--red); }
+
+  .left {
+    grid-area: left;
+    background: var(--paper);
+    border-right: 2px solid var(--ink);
+    padding: 14px;
+    overflow-y: auto;
+  }
+  .panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .panel-title small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0;
+    opacity: 0.5;
+  }
+  .stat-row { margin-bottom: 8px; }
+  .stat-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+    color: var(--ink-soft);
+  }
+  .stat-label .v { color: var(--ink); font-weight: 700; }
+  .bar {
+    height: 10px;
+    background: var(--bg-2);
+    border: 1.5px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--green);
+    position: relative;
+  }
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.15) 3px, rgba(255,255,255,0.15) 6px);
+  }
+  .bar-fill.energy { background: #4a90c8; }
+  .bar-fill.lapar { background: #d49520; }
+  .bar-fill.hygiene { background: #5db896; }
+  .bar-fill.stress { background: var(--stress); }
+  .bar-fill.happiness { background: #d4af3c; }
+  .bar-fill.health { background: var(--green); }
+  .bar-fill.warn { animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: 0.5; } }
+
+  .character-card {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px;
+    margin-bottom: 14px;
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow);
+  }
+  .character-card .name {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1;
+  }
+  .character-card .meta {
+    font-size: 9px;
+    opacity: 0.6;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .character-card .background {
+    font-size: 10px;
+    opacity: 0.85;
+    margin-top: 6px;
+    font-style: italic;
+    font-family: 'Instrument Serif', serif;
+    line-height: 1.4;
+  }
+  .class-badge {
+    display: inline-block;
+    background: var(--red);
+    color: var(--paper);
+    padding: 2px 6px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+  .class-badge.sangat-miskin { background: #4a3a2a; }
+  .class-badge.miskin { background: #8b6a3a; }
+  .class-badge.lower { background: var(--gold); }
+  .class-badge.middle { background: var(--green); }
+  .class-badge.kaya { background: var(--blue); }
+  .class-badge.crazy { background: var(--magenta); }
+
+  .job-info {
+    margin-top: 10px;
+    padding: 7px 9px;
+    background: var(--paper);
+    border-left: 3px solid var(--blue);
+    font-size: 10px;
+    line-height: 1.45;
+  }
+  .job-info .ji-label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.55;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .job-info .ji-main { font-weight: 700; color: var(--ink); }
+  .job-info .ji-payday {
+    margin-top: 3px;
+    color: var(--green);
+    font-weight: 500;
+  }
+  .job-info .ji-payday.soon { color: var(--gold); }
+  .job-info .ji-payday.today { color: var(--red); font-weight: 700; }
+
+  .main {
+    grid-area: main;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--bg);
+    position: relative;
+  }
+  .main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(20,17,13,0.04) 1px, transparent 1px);
+    background-size: 14px 14px;
+    pointer-events: none;
+  }
+  .scene-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .scene-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+  .scene-title small {
+    display: block;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    letter-spacing: 0;
+    margin-top: 2px;
+  }
+  .weather-pill {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6px 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow);
+  }
+
+  .mission-banner {
+    background: linear-gradient(135deg, #fff9e0 0%, #ffd8a8 100%);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow);
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .mission-banner.urgent { background: linear-gradient(135deg, #ffe0e0 0%, #ffb0b0 100%); }
+  .mission-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--red);
+    margin-bottom: 2px;
+  }
+  .mission-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    line-height: 1.1;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .mission-desc {
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+  .mission-progress {
+    margin-top: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .mission-progress .reward {
+    color: var(--green);
+    font-size: 10px;
+    margin-left: 6px;
+  }
+
+  .log {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow);
+    padding: 12px;
+    margin-bottom: 14px;
+    max-height: 200px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .log-entry {
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(20,17,13,0.15);
+    font-size: 12px;
+    line-height: 1.5;
+    animation: slideIn 0.25s ease-out;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .log-entry:last-child { border-bottom: none; }
+  .log-entry .time {
+    color: var(--ink-soft);
+    font-size: 9px;
+    margin-right: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .log-entry.good .msg::before { content: '✓ '; color: var(--green); font-weight: 700; }
+  .log-entry.bad .msg::before { content: '✗ '; color: var(--red); font-weight: 700; }
+  .log-entry.event .msg::before { content: '◆ '; color: var(--magenta); font-weight: 700; }
+  .log-entry.mission .msg::before { content: '★ '; color: var(--gold); font-weight: 700; }
+
+  .actions-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .actions-title small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0;
+    color: var(--ink-soft);
+    text-transform: none;
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .action-btn {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    padding: 10px 8px;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    color: var(--ink);
+    transition: transform 0.08s, box-shadow 0.08s;
+    box-shadow: 3px 3px 0 var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .action-btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .action-btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  .action-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  .action-btn .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1px;
+    display: block;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .action-btn .sub {
+    font-size: 10px;
+    display: block;
+    color: var(--ink-soft);
+    margin-bottom: 3px;
+    line-height: 1.2;
+  }
+  .action-btn .cost {
+    font-size: 9px;
+    color: var(--ink-soft);
+    letter-spacing: 0.5px;
+  }
+  .action-btn[data-type="hustle"] { background: linear-gradient(135deg, var(--paper) 60%, #ffe9b0 60%); }
+  .action-btn[data-type="bad"] { background: linear-gradient(135deg, var(--paper) 60%, #ffd0d0 60%); }
+  .action-btn[data-type="good"] { background: linear-gradient(135deg, var(--paper) 60%, #d3e8d8 60%); }
+  .action-btn[data-type="time"] {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 3px 3px 0 var(--red);
+  }
+  .action-btn[data-type="time"] .sub, .action-btn[data-type="time"] .cost { color: rgba(245,239,225,0.6); }
+
+  .right {
+    grid-area: right;
+    background: var(--paper);
+    border-left: 2px solid var(--ink);
+    padding: 14px;
+    overflow-y: auto;
+  }
+  .news-feed { margin-bottom: 14px; }
+  .news-item {
+    border-left: 3px solid var(--red);
+    padding: 6px 0 6px 8px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    animation: slideIn 0.3s ease-out;
+  }
+  .news-item .cat {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1px 5px;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 4px;
+    vertical-align: 1px;
+  }
+  .news-item.politik { border-left-color: var(--blue); }
+  .news-item.korupsi { border-left-color: var(--red); }
+  .news-item.artis { border-left-color: var(--magenta); }
+  .news-item.tiktok { border-left-color: var(--gold); }
+  .news-item.ekonomi { border-left-color: var(--green); }
+  .news-item.absurd { border-left-color: #8b6a3a; }
+  .news-item.mistis { border-left-color: #6a3a8b; }
+
+  .relations-list .rel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(20,17,13,0.15);
+    font-size: 11px;
+  }
+  .relations-list .rel .name { font-weight: 700; }
+  .relations-list .rel .type { font-size: 9px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; }
+  .rel-bar { width: 50px; height: 4px; background: var(--bg-2); border: 1px solid var(--ink); }
+  .rel-bar > div { height: 100%; background: var(--green); }
+  .rel-bar > div.bad { background: var(--red); }
+
+  .bottom {
+    grid-area: bottom;
+    background: var(--ink);
+    border-top: 3px solid var(--red);
+    display: flex;
+    justify-content: space-around;
+    padding: 6px 0;
+  }
+  .nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 6px 10px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+    position: relative;
+  }
+  .nav-btn.active { opacity: 1; color: var(--red); }
+  .nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: var(--red);
+  }
+  .nav-icon { font-size: 14px; display: block; }
+  /* On desktop the left & right panels are always visible in the grid,
+     so the Diri/Dunia drawer buttons have nothing to open. Hide them
+     and let the "Aksi" button sit centered & passive. */
+  @media (min-width: 1025px) {
+    .nav-btn[data-nav="left"],
+    .nav-btn[data-nav="right"] { display: none; }
+    .bottom { padding: 4px 0; }
+    .nav-btn[data-nav="main"] { opacity: 0.7; cursor: default; }
+    .nav-btn[data-nav="main"].active::after { display: none; }
+  }
+
+  /* Save indicator pill — quiet, lives in the topbar */
+  .save-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 7px;
+    border: 1px solid rgba(245,239,225,0.25);
+    color: rgba(245,239,225,0.55);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+  .save-pill:hover { color: var(--paper); border-color: var(--paper); }
+  .save-pill.saving { color: var(--gold); border-color: var(--gold); }
+  .save-pill.saved { color: #6dd66d; border-color: rgba(109,214,109,0.5); }
+  .save-pill.error { color: var(--red); border-color: var(--red); animation: blink 0.8s 3; }
+  @media (max-width: 600px) {
+    .save-pill { font-size: 8px; padding: 2px 5px; letter-spacing: 0.5px; }
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 17, 13, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    animation: fadeIn 0.2s;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--red);
+    max-width: 540px;
+    width: 100%;
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .modal-sub {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .modal-body {
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .modal-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .modal-choice {
+    background: var(--bg);
+    border: 2px solid var(--ink);
+    padding: 10px 12px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: 12px;
+    transition: all 0.1s;
+    color: var(--ink);
+  }
+  .modal-choice:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .modal-choice:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .modal-choice .hint {
+    display: block;
+    font-size: 9px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .modal-choice:hover:not(:disabled) .hint { color: var(--paper); opacity: 0.7; }
+
+  .game-over { text-align: center; }
+  .game-over .obit {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 14px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    margin: 14px 0;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    text-align: left;
+    font-size: 11px;
+    margin-bottom: 14px;
+  }
+  .summary-grid > div {
+    background: var(--bg);
+    padding: 8px;
+    border: 1.5px solid var(--ink);
+  }
+  .summary-grid .lbl {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .summary-grid .vl {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .ticker {
+    overflow: hidden;
+    flex: 1;
+    position: relative;
+    min-width: 0;
+    height: 14px;
+  }
+  .ticker-track {
+    display: inline-block;
+    white-space: nowrap;
+    animation: ticker 50s linear infinite;
+    padding-left: 100%;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+  }
+  .ticker-item {
+    display: inline-block;
+    margin-right: 30px;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .ticker-item.up { color: #6dd66d; }
+  .ticker-item.down { color: #ff6b6b; }
+
+  .intro-modal { max-width: 600px; }
+  .intro-modal .modal-title { font-size: 36px; color: var(--red); }
+  .intro-modal .modal-title span { color: var(--ink); }
+
+  .spawn-card {
+    background: var(--bg);
+    border: 2px solid var(--ink);
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.12s;
+    position: relative;
+  }
+  .spawn-card:hover {
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--red);
+    transform: translate(-1px, -1px);
+  }
+  .spawn-card .spawn-name {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1;
+  }
+  .spawn-card .spawn-tag {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2px 6px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 6px 4px 6px 0;
+  }
+  .spawn-card .spawn-loc {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .spawn-card .spawn-quote {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    line-height: 1.3;
+    border-left: 2px solid var(--ink);
+    padding-left: 8px;
+  }
+  .reroll-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 8px 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .reroll-btn:hover { background: var(--red); }
+
+  .toast {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-200%);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 18px;
+    border: 2px solid var(--red);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    z-index: 200;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    box-shadow: 4px 4px 0 var(--red);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast .sub {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    opacity: 0.7;
+    letter-spacing: 0;
+    margin-top: 2px;
+  }
+
+  .panel-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 17, 13, 0.55);
+    z-index: 49;
+    animation: fadeIn 0.2s;
+  }
+  .panel-backdrop.show { display: block; }
+
+  @media (max-width: 1024px) {
+    #app {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas:
+        "top"
+        "main"
+        "bottom";
+    }
+    .left, .right {
+      display: none;
+      position: fixed;
+      top: 0;
+      height: 100%;
+      width: 88%;
+      max-width: 360px;
+      z-index: 50;
+      box-shadow: 6px 0 24px rgba(0,0,0,0.4);
+      padding-top: 50px;
+      overscroll-behavior: contain;
+    }
+    .left.open { display: block; left: 0; }
+    .right.open { display: block; right: 0; left: auto; box-shadow: -6px 0 24px rgba(0,0,0,0.4); }
+    .topbar {
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      padding: 6px 10px;
+    }
+    .logo { flex-basis: auto; }
+    .top-stat { padding-right: 8px; }
+    .top-stat .value { font-size: 12px; }
+    .scene-title { font-size: 24px; }
+    .modal { box-shadow: 4px 4px 0 var(--red); }
+    .reset-btn { margin-left: auto; }
+  }
+  @media (max-width: 600px) {
+    .topbar { gap: 4px 8px; padding: 5px 8px; }
+    .logo { font-size: 16px; }
+    .top-stat { padding-right: 6px; }
+    .top-stat .label { font-size: 8px; }
+    .top-stat .value { font-size: 11px; }
+    .top-stat:last-of-type { border-right: none; }
+    /* hide location stat on smaller screens - shown in scene-sub anyway */
+    .top-stat[data-id="loc"] { display: none; }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 12px; }
+    .scene-title { font-size: 20px; }
+    .scene-title small { font-size: 12px; }
+    .action-btn { padding: 8px 6px; }
+    .action-btn .title { font-size: 13px; }
+    .main { padding: 10px; }
+    .modal { padding: 16px; box-shadow: 3px 3px 0 var(--red); }
+    .modal-title { font-size: 22px; }
+    .ticker { display: none; }
+    .actions { grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 6px; }
+    .bottom { padding: 4px 0; }
+    .nav-btn { font-size: 10px; padding: 5px 6px; }
+    .nav-icon { font-size: 13px; }
+    .character-card .name { font-size: 18px; }
+    .scene-header { gap: 6px; margin-bottom: 10px; }
+    .weather-pill { font-size: 9px; padding: 5px 8px; }
+    .mission-banner { padding: 8px 10px; }
+    .mission-title { font-size: 16px; }
+    .log { max-height: 160px; padding: 10px; }
+    .log-entry { font-size: 11px; }
+    .toast { top: 56px; font-size: 14px; padding: 8px 14px; }
+  }
+  @media (max-width: 360px) {
+    .actions { grid-template-columns: 1fr 1fr; }
+    .top-stat .value { font-size: 10px; }
+    .top-stat .label { font-size: 7px; }
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--ink-soft); border: 1px solid var(--bg); }
+
+  .sheet-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    border: 2px solid var(--paper);
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    display: none;
+    z-index: 5;
+    line-height: 1;
+    border-radius: 0;
+  }
+  @media (max-width: 1024px) {
+    .sheet-close { display: flex; align-items: center; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="panel-backdrop" id="panel-backdrop" onclick="closeAllPanels()"></div>
+<div id="app">
+  <header class="topbar">
+    <div class="logo" id="logo">HIDUP<span>DI</span>KONOHA</div>
+    <div class="top-stat" data-id="date">
+      <div class="label">Tanggal</div>
+      <div class="value" id="t-date">Hari 1</div>
+    </div>
+    <div class="top-stat" data-id="money">
+      <div class="label">Saldo</div>
+      <div class="value money" id="t-money">Rp 0</div>
+    </div>
+    <div class="top-stat" data-id="debt">
+      <div class="label">Hutang</div>
+      <div class="value debt" id="t-debt">Rp 0</div>
+    </div>
+    <div class="top-stat" data-id="stress">
+      <div class="label">Stress</div>
+      <div class="value stress" id="t-stress">0</div>
+    </div>
+    <div class="top-stat" data-id="loc">
+      <div class="label">Lokasi</div>
+      <div class="value" id="t-loc" style="font-size:11px">—</div>
+    </div>
+    <div class="ticker">
+      <div class="ticker-track" id="ticker"></div>
+    </div>
+    <button class="save-pill" id="save-pill" onclick="manualSave()" title="Klik untuk save manual">— belum tersimpan</button>
+    <button class="reset-btn" onclick="confirmReset()">RESET</button>
+  </header>
+
+  <aside class="left" id="leftPanel">
+    <button class="sheet-close" onclick="closeAllPanels()" aria-label="Tutup">×</button>
+    <div class="character-card">
+      <div class="name" id="char-name">—</div>
+      <div class="meta" id="char-meta">—</div>
+      <div class="background" id="char-bg">—</div>
+      <div class="class-badge" id="char-class">—</div>
+      <div class="job-info" id="job-info" style="display:none"></div>
+    </div>
+    <div class="panel-title">Tubuh <small>fisik</small></div>
+    <div class="stat-row">
+      <div class="stat-label"><span>Energi</span><span class="v" id="lbl-energi">0</span></div>
+      <div class="bar"><div class="bar-fill energy" id="bar-energi" style="width:0%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label"><span>Lapar</span><span class="v" id="lbl-lapar">0</span></div>
+      <div class="bar"><div class="bar-fill lapar" id="bar-lapar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label"><span>Higiene</span><span class="v" id="lbl-hygiene">0</span></div>
+      <div class="bar"><div class="bar-fill hygiene" id="bar-hygiene" style="width:0%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label"><span>Kesehatan</span><span class="v" id="lbl-health">0</span></div>
+      <div class="bar"><div class="bar-fill health" id="bar-health" style="width:0%"></div></div>
+    </div>
+    <div class="panel-title" style="margin-top:14px">Jiwa <small>mental</small></div>
+    <div class="stat-row">
+      <div class="stat-label"><span>Stress</span><span class="v" id="lbl-stress">0</span></div>
+      <div class="bar"><div class="bar-fill stress" id="bar-stress" style="width:0%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label"><span>Kebahagiaan</span><span class="v" id="lbl-happiness">0</span></div>
+      <div class="bar"><div class="bar-fill happiness" id="bar-happiness" style="width:0%"></div></div>
+    </div>
+    <div class="panel-title" style="margin-top:14px">Skill</div>
+    <div id="skills-list" style="font-size:10px;line-height:1.8"></div>
+    <div class="panel-title" style="margin-top:14px">Hidden <small>tersembunyi</small></div>
+    <div id="hidden-list" style="font-size:10px;line-height:1.8"></div>
+  </aside>
+
+  <main class="main">
+    <div class="scene-header">
+      <div class="scene-title" id="scene-title">Pagi
+        <small id="scene-sub">—</small>
+      </div>
+      <div class="weather-pill" id="weather">—</div>
+    </div>
+    <div id="mission-area"></div>
+    <div class="log" id="log"></div>
+    <div class="actions-title">
+      <span>— Aksi —</span>
+      <small id="action-hint">pilih 1 aksi per blok waktu</small>
+    </div>
+    <div class="actions" id="actions"></div>
+  </main>
+
+  <aside class="right" id="rightPanel">
+    <button class="sheet-close" onclick="closeAllPanels()" aria-label="Tutup">×</button>
+    <div class="panel-title">Trending <small>headline</small></div>
+    <div class="news-feed" id="news-feed"></div>
+    <div class="panel-title" style="margin-top:14px">Relasi <small>orang sekitar</small></div>
+    <div class="relations-list" id="relations-list"></div>
+    <div class="panel-title" style="margin-top:14px">Hutang & Tagihan</div>
+    <div id="debt-list" style="font-size:11px;line-height:1.6"></div>
+    <div class="panel-title" style="margin-top:14px">Misi Aktif <small id="mission-count">0</small></div>
+    <div id="mission-list" style="font-size:11px;line-height:1.5"></div>
+  </aside>
+
+  <nav class="bottom">
+    <button class="nav-btn active" data-nav="main">
+      <span class="nav-icon">⌂</span>Aksi
+    </button>
+    <button class="nav-btn" data-nav="left">
+      <span class="nav-icon">♥</span>Diri
+    </button>
+    <button class="nav-btn" data-nav="right">
+      <span class="nav-icon">◉</span>Dunia
+    </button>
+  </nav>
+</div>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+"use strict";
+
+/* HIDUP DI KONOHA v2 — single file, no persistence */
+
+const $ = id => document.getElementById(id);
+const rand = (a, b) => Math.random() * (b - a) + a;
+const irand = (a, b) => Math.floor(rand(a, b + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const pickN = (arr, n) => {
+  const copy = [...arr]; const out = [];
+  for (let i = 0; i < n && copy.length; i++) out.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+  return out;
+};
+const chance = p => Math.random() < p;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rupiah = n => {
+  if (n === undefined || n === null || isNaN(n)) return 'Rp 0';
+  const sign = n < 0 ? '-' : ''; n = Math.abs(Math.round(n));
+  if (n >= 1e9) return sign + 'Rp ' + (n / 1e9).toFixed(1) + ' M';
+  if (n >= 1e6) return sign + 'Rp ' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'jt';
+  if (n >= 1e3) return sign + 'Rp ' + Math.round(n / 1e3) + 'rb';
+  return sign + 'Rp ' + n;
+};
+const weightedPick = arr => {
+  const total = arr.reduce((s, x) => s + (x.w || 1), 0);
+  let r = Math.random() * total;
+  for (const x of arr) { r -= (x.w || 1); if (r <= 0) return x; }
+  return arr[arr.length - 1];
+};
+
+// ============ DATA POOLS ============
+const NAMA_DEPAN = ['Budi','Siti','Agus','Dewi','Rizki','Aulia','Bayu','Sri','Fajar','Indah','Yoga','Tika','Hendra','Maya','Dimas','Putri','Surya','Rina','Eko','Lina','Wahyu','Anisa','Gilang','Mega','Bagus','Citra','Ardi','Lestari','Joko','Wati','Dian','Reza','Aldi','Tari','Niko','Mira','Ilham','Yuni','Tegar','Sinta','Andre','Karina','Bima','Vina','Roni','Sasha','Yanto','Lulu','Galih','Aisyah'];
+const NAMA_BLKG = ['Saputra','Wijaya','Hidayat','Sari','Pratama','Lestari','Setiawan','Anggraini','Nugroho','Ramadhan','Putra','Putri','Maulana','Kusuma','Permata','Sihotang','Simbolon','Hutapea','Sinaga','Tampubolon','Manurung','Siregar','Ginting','Sembiring','Tarigan','Susanto','Halim','Tan','Wibowo','Hartono'];
+
+const PULAU = {
+  Jawa: ['Metro Jaya','Bekasih Industri','Depokarta','Jogjapura','Semarang Laut','Priangan Barat','Banten Raya'],
+  Sumatera: ['Sumatera Sawit','Andalas Barat','Riau Industri','Lampung Selatan'],
+  Kalimantan: ['Kalimantan Tambang','Nusantara Baru','Sungai Raya'],
+  Sulawesi: ['Sulawesi Pelabuhan','Sulawesi Tambang'],
+  Papua: ['Papua Gunung','Papua Tambang','Papua Pesisir'],
+  'Bali & NTT': ['Bali Wisata','Bali Selatan','Nusa Timur']
+};
+
+const NEIGHBORHOOD_ARCH = [
+  { id: 'pinggir-kali', label: 'Pinggir Kali', class: 'sangat-miskin', biaya: 0.35, peluang: 'rendah', vibe: 'banjir tiap musim, bocah berenang di got' },
+  { id: 'rel-kereta', label: 'Dekat Rel Kereta', class: 'sangat-miskin', biaya: 0.40, peluang: 'rendah', vibe: 'kereta lewat tiap 12 menit, gelas tetangga gemetar' },
+  { id: 'gang-sempit', label: 'Gang Sempit', class: 'miskin', biaya: 0.50, peluang: 'rendah', vibe: 'motor susah balik, jemuran nyrempet kepala' },
+  { id: 'kos-mahasiswa', label: 'Kawasan Kos Mahasiswa', class: 'lower', biaya: 0.65, peluang: 'sedang', vibe: 'tugas kelompok jam 3 pagi, indomie habis tiap kamis' },
+  { id: 'kawasan-pabrik', label: 'Kawasan Pabrik', class: 'miskin', biaya: 0.55, peluang: 'sedang', vibe: 'sirine pabrik 3x sehari, demo buruh sebulan sekali' },
+  { id: 'banjir', label: 'Kawasan Banjir Tahunan', class: 'miskin', biaya: 0.45, peluang: 'rendah', vibe: 'tiap januari ngungsi, perabot dinaikin meja' },
+  { id: 'startup', label: 'Pusat Startup', class: 'middle', biaya: 1.10, peluang: 'tinggi', vibe: 'co-working space, kopi Rp 50rb, demo day tiap kuartal' },
+  { id: 'elite', label: 'Cluster Elite', class: 'kaya', biaya: 1.50, peluang: 'tinggi', vibe: 'satpam 24 jam, tetangga jarang ketemu' },
+  { id: 'desa-sawit', label: 'Desa Sawit', class: 'miskin', biaya: 0.50, peluang: 'rendah', vibe: 'hutan terbakar tiap kemarau, asap nempel di paru' },
+  { id: 'area-tambang', label: 'Area Tambang', class: 'middle', biaya: 1.00, peluang: 'tinggi', vibe: 'gaji gede, sinyal mati, hutan dibabat' },
+  { id: 'kampung-nelayan', label: 'Kampung Nelayan', class: 'miskin', biaya: 0.50, peluang: 'sedang', vibe: 'amis garam, harga ikan turun tiap minggu' },
+  { id: 'subsidi', label: 'Perumahan Subsidi', class: 'lower', biaya: 0.70, peluang: 'sedang', vibe: 'cat ngelupas tahun ke-2, tetangga sound horeg' },
+  { id: 'apartemen-murah', label: 'Apartemen Studio Murah', class: 'lower', biaya: 0.85, peluang: 'sedang', vibe: 'unit 21m², lift suka mati, satpam ngantuk' },
+  { id: 'scbd', label: 'Kawasan SCBD-like', class: 'kaya', biaya: 1.60, peluang: 'tinggi', vibe: 'gedung kaca, kopi Rp 75rb, semua orang lagi meeting' },
+  { id: 'kemang', label: 'Kawasan Kemang-like', class: 'kaya', biaya: 1.45, peluang: 'tinggi', vibe: 'restaurant mahal, hookup app aktif, bule lokal' },
+  { id: 'bsd', label: 'Kawasan BSD-like', class: 'middle', biaya: 1.20, peluang: 'sedang', vibe: 'kompleks rapi, weekend ke mall' },
+  { id: 'pik', label: 'Kawasan PIK-like', class: 'crazy', biaya: 2.20, peluang: 'tinggi', vibe: 'reklamasi pantai, sushi Rp 250rb, semua plat B 1 abc' },
+  { id: 'pinggir-kota', label: 'Pinggir Kota Suburb', class: 'lower', biaya: 0.75, peluang: 'sedang', vibe: 'commute 2 jam ke pusat, AC sejuk doang' }
+];
+
+const BACKGROUND_LIST = [
+  { id: 'anak-tunggal-pns', label: 'Anak Tunggal PNS Daerah', loc_class: 'lower', money: [800000, 2500000], debt: [0, 200000], ordal: 25, trauma: 8, burden: 30, traits: { discipline: 50, charm: 35 }, quote: 'Tiap bulan tanggal 1 cek rekening orangtua. Selalu sama.' },
+  { id: 'anak-buruh-pabrik', label: 'Anak Buruh Pabrik', loc_class: 'miskin', money: [80000, 350000], debt: [200000, 800000], ordal: 5, trauma: 25, burden: 60, traits: { discipline: 60, charm: 25 }, quote: 'Lahir di kontrakan, lulus SMA langsung kerja di pabrik yang sama dengan bapak.' },
+  { id: 'anak-petani', label: 'Anak Petani Desa', loc_class: 'miskin', money: [50000, 200000], debt: [0, 500000], ordal: 3, trauma: 20, burden: 50, traits: { discipline: 70, street_smart: 60 }, quote: 'Sawah dijual buat biaya kuliah. Sampai sekarang masih kerja jadi admin.' },
+  { id: 'anak-tukang-warung', label: 'Anak Pemilik Warung Sembako', loc_class: 'lower', money: [300000, 1500000], debt: [0, 300000], ordal: 10, trauma: 12, burden: 35, traits: { negotiation: 50, street_smart: 55 }, quote: 'Sejak SD bantu jaga warung. Kalkulator di kepala lebih cepat dari kasir.' },
+  { id: 'crazy-rich', label: 'Anak Konglomerat Properti', loc_class: 'crazy', money: [30000000, 80000000], debt: [0, 0], ordal: 85, trauma: 18, burden: 5, traits: { charm: 70, public_speaking: 60 }, quote: 'Mobil pertama hadiah ulang tahun ke-17. Belum pernah naik angkot.' },
+  { id: 'anak-pendeta', label: 'Anak Pendeta', loc_class: 'lower', money: [200000, 900000], debt: [0, 300000], ordal: 30, trauma: 15, burden: 40, traits: { public_speaking: 60, discipline: 55 }, quote: 'Tiap minggu di gereja jam 8. Diam-diam gak yakin sama segalanya.' },
+  { id: 'yatim-piatu', label: 'Yatim Piatu Dibesarkan Saudara', loc_class: 'sangat-miskin', money: [20000, 100000], debt: [500000, 2000000], ordal: 2, trauma: 60, burden: 70, traits: { street_smart: 75, discipline: 50 }, quote: 'Belajar masak dari tetangga. Belajar bertahan dari diri sendiri.' },
+  { id: 'sandwich-gen', label: 'Sandwich Generation', loc_class: 'lower', money: [500000, 2000000], debt: [500000, 3000000], ordal: 15, trauma: 30, burden: 80, traits: { discipline: 60, negotiation: 40 }, quote: 'Gaji belum cair, mama udah WA minta transferan. Adik mau bayar UKT.' },
+  { id: 'mantan-ojol', label: 'Mantan Driver Ojol Pindah Kota', loc_class: 'lower', money: [150000, 600000], debt: [300000, 1500000], ordal: 8, trauma: 22, burden: 25, traits: { driving: 70, street_smart: 60 }, quote: 'Bensin naik, bonus turun. Akhirnya nyerah, pindah cari peruntungan.' },
+  { id: 'fresh-grad-stress', label: 'Fresh Graduate Pengangguran', loc_class: 'middle', money: [200000, 1200000], debt: [800000, 4000000], ordal: 18, trauma: 18, burden: 30, traits: { coding: 25, public_speaking: 30 }, quote: 'Lulus cum laude, 47 kali apply, masih nunggu HR yang katanya "akan menghubungi".' },
+  { id: 'janda-2-anak', label: 'Single Parent 2 Anak', loc_class: 'lower', money: [100000, 700000], debt: [500000, 2500000], ordal: 12, trauma: 40, burden: 75, traits: { discipline: 70, negotiation: 50 }, quote: 'Suami pergi dua tahun lalu. Tagihan tetep dateng. Anak tetep makan.' },
+  { id: 'mahasiswa-rantau', label: 'Mahasiswa Tingkat Akhir Rantau', loc_class: 'lower', money: [300000, 1500000], debt: [0, 800000], ordal: 20, trauma: 10, burden: 25, traits: { coding: 35, public_speaking: 40 }, quote: 'Skripsi bab 3, dospem ghosting, kos nunggak 2 bulan.' },
+  { id: 'pekerja-tambang-pensiun', label: 'Mantan Pekerja Tambang Pulang Kampung', loc_class: 'middle', money: [3000000, 12000000], debt: [0, 2000000], ordal: 10, trauma: 35, burden: 30, traits: { discipline: 60, street_smart: 50 }, quote: 'Lima tahun di Papua, balik bawa tabungan dan dengkul yang aus.' },
+  { id: 'anak-pejabat', label: 'Anak Mantan Pejabat Daerah', loc_class: 'kaya', money: [8000000, 35000000], debt: [0, 500000], ordal: 70, trauma: 15, burden: 10, traits: { charm: 60, public_speaking: 50 }, quote: 'Bapak udah pensiun, nama masih punya bobot di kabupaten.' },
+  { id: 'mantan-tki', label: 'Mantan TKI Hongkong', loc_class: 'miskin', money: [800000, 4000000], debt: [0, 1500000], ordal: 5, trauma: 30, burden: 50, traits: { negotiation: 55, street_smart: 65 }, quote: 'Tujuh tahun di rumah orang. Pulang bawa kulkas dua pintu dan trauma yang sama.' },
+  { id: 'anak-artis-medsos', label: 'Anak Influencer Medsos', loc_class: 'middle', money: [1500000, 6000000], debt: [0, 300000], ordal: 40, trauma: 12, burden: 20, traits: { public_speaking: 55, charm: 60 }, quote: 'Sejak kecil masuk konten orangtua. Sekarang bingung ID-nya sendiri yang mana.' }
+];
+
+const PEKERJAAN = [
+  { id: 'pengangguran', nama: 'Pengangguran', gaji: [0,0], stress: 0, energi: 0, tier: 0 },
+  { id: 'kuli', nama: 'Kuli Bangunan', gaji: [120000, 250000], stress: 15, energi: -35, harian: true, tier: 1 },
+  { id: 'ojol', nama: 'Driver Ojol', gaji: [80000, 220000], stress: 12, energi: -25, harian: true, tier: 1 },
+  { id: 'parkir', nama: 'Tukang Parkir', gaji: [50000, 180000], stress: 8, energi: -18, harian: true, tier: 1 },
+  { id: 'buruh-angkut', nama: 'Buruh Angkut Pasar', gaji: [90000, 200000], stress: 10, energi: -38, harian: true, tier: 1 },
+  { id: 'asisten-rt', nama: 'Asisten Rumah Tangga', gaji: [1500000, 2800000], stress: 12, energi: -25, tier: 1 },
+  { id: 'kasir', nama: 'Kasir Minimarket', gaji: [2800000, 4500000], stress: 18, energi: -25, tier: 2 },
+  { id: 'office-boy', nama: 'Office Boy', gaji: [2500000, 4000000], stress: 10, energi: -22, tier: 2 },
+  { id: 'spbu', nama: 'Petugas SPBU', gaji: [2200000, 3800000], stress: 10, energi: -22, tier: 2 },
+  { id: 'guru-honorer', nama: 'Guru Honorer', gaji: [1200000, 2500000], stress: 25, energi: -25, moral: 2, tier: 2 },
+  { id: 'admin', nama: 'Admin Gudang', gaji: [4000000, 7000000], stress: 20, energi: -20, tier: 3 },
+  { id: 'sales-asuransi', nama: 'Sales Asuransi', gaji: [2000000, 9000000], stress: 28, energi: -25, tier: 3 },
+  { id: 'cafe-bali', nama: 'Barista Cafe Bali', gaji: [2500000, 5500000], stress: 8, energi: -20, tier: 3 },
+  { id: 'startup', nama: 'Staff Startup', gaji: [5500000, 14000000], stress: 35, energi: -30, tier: 4 },
+  { id: 'corporate', nama: 'Staff Korporat', gaji: [7000000, 18000000], stress: 30, energi: -28, tier: 4 },
+  { id: 'tambang', nama: 'Buruh Tambang Papua', gaji: [8000000, 22000000], stress: 25, energi: -40, danger: true, tier: 4 },
+  { id: 'creator', nama: 'Content Creator', gaji: [0, 8000000], stress: 22, energi: -15, viral: true, tier: 3 },
+  { id: 'affiliate', nama: 'Affiliate Live TikTok', gaji: [0, 12000000], stress: 28, energi: -28, viral: true, tier: 3 },
+  { id: 'pinjol-marketer', nama: 'Telemarketer Pinjol', gaji: [3500000, 6500000], stress: 32, energi: -20, moral: -3, tier: 3 },
+  { id: 'buzzer', nama: 'Buzzer Politik', gaji: [4000000, 9000000], stress: 25, energi: -18, moral: -4, tier: 3 },
+  { id: 'caleg-staff', nama: 'Staff Caleg', gaji: [3500000, 8000000], stress: 22, energi: -22, moral: -2, tier: 3 },
+  { id: 'kontraktor', nama: 'Kontraktor Proyek', gaji: [10000000, 35000000], stress: 35, energi: -28, tier: 5 },
+  { id: 'manager', nama: 'Manager Korporat', gaji: [18000000, 45000000], stress: 32, energi: -28, tier: 5 }
+];
+
+const MAKANAN_POOL = [
+  { id: 'popmie', nama: 'Pop Mie aja', harga: 4000, kenyang: 25, hp: 0, ht: -3, vibe: 'tanggal tua mode' },
+  { id: 'indomie', nama: 'Indomie + Telor', harga: 8000, kenyang: 35, hp: 2, ht: -2, vibe: 'lagi-lagi' },
+  { id: 'warteg', nama: 'Warteg pilih 3', harga: 18000, kenyang: 65, hp: 4, ht: 0, vibe: 'pilihan rakyat' },
+  { id: 'nasi-bungkus', nama: 'Nasi Bungkus Warung', harga: 14000, kenyang: 65, hp: 3, ht: 0, vibe: 'bu Yati langganan' },
+  { id: 'padang', nama: 'Nasi Padang', harga: 25000, kenyang: 75, hp: 8, ht: 0, vibe: 'rendang, sambal ijo, kuah dikit' },
+  { id: 'gofood', nama: 'GoFood Ayam Geprek', harga: 32000, kenyang: 60, hp: 6, ht: 0, vibe: 'level 5, nyesel besok' },
+  { id: 'gofood-mahal', nama: 'GoFood Sushi Set', harga: 75000, kenyang: 55, hp: 10, ht: 0, vibe: 'self-reward katanya' },
+  { id: 'cafe-brunch', nama: 'Cafe Brunch', harga: 95000, kenyang: 55, hp: 12, ht: 1, vibe: 'foto dulu, makan kedua' },
+  { id: 'rumah', nama: 'Masakan Rumah', harga: 12000, kenyang: 80, hp: 15, ht: 2, vibe: 'masak sendiri, terharu' },
+  { id: 'pasar-pagi', nama: 'Lontong Sayur Pasar', harga: 12000, kenyang: 60, hp: 5, ht: 0, vibe: 'pagi-pagi ke pasar' },
+  { id: 'gorengan', nama: 'Gorengan 5 biji', harga: 5000, kenyang: 20, hp: 3, ht: -2, vibe: 'kolesterol, kebahagiaan' },
+  { id: 'soto', nama: 'Soto Ayam Pinggir Jalan', harga: 15000, kenyang: 60, hp: 6, ht: 0, vibe: 'hangat di dada' },
+  { id: 'bakso', nama: 'Bakso Urat', harga: 18000, kenyang: 55, hp: 7, ht: 0, vibe: 'pakai cabe banyak' },
+  { id: 'steak', nama: 'Steak Premium', harga: 350000, kenyang: 70, hp: 18, ht: 0, vibe: 'medium rare, life is good' },
+  { id: 'boba', nama: 'Boba Kekinian', harga: 28000, kenyang: 15, hp: 5, ht: -1, vibe: 'less ice less sugar masih manis' },
+  { id: 'angkringan', nama: 'Angkringan Nasi Kucing', harga: 6000, kenyang: 30, hp: 4, ht: 0, vibe: 'wedang jahe, ngobrol sampe pagi' },
+  { id: 'mie-ayam', nama: 'Mie Ayam Gerobak', harga: 14000, kenyang: 55, hp: 5, ht: 0, vibe: 'pakai pangsit, irit air' },
+  { id: 'puasa', nama: 'Puasa hari ini', harga: 0, kenyang: 5, hp: 4, ht: 0, vibe: 'iman + irit', special: 'puasa' }
+];
+
+const BERITA_POOL = [
+  { cat: 'politik', txt: 'Anggota dewan studi banding ke Swiss bahas keripik singkong.' },
+  { cat: 'politik', txt: 'Menteri sebut harga beras "biasa aja kok" sambil makan di restoran Rp 800rb.' },
+  { cat: 'politik', txt: 'DPR rapat soal RUU baru, 70% kursi kosong, sisanya tidur.' },
+  { cat: 'politik', txt: 'Caleg bagikan sembako H-1 pencoblosan, isinya 1/4 kg beras dan 1 mie.' },
+  { cat: 'politik', txt: 'Gubernur baru janji "tidak ada banjir lagi", banjir minggu depannya.' },
+  { cat: 'korupsi', txt: 'Mantan kepala dinas tertangkap, vonis 2 tahun + denda Rp 50jt. Kerugian negara Rp 480 M.' },
+  { cat: 'korupsi', txt: 'Proyek jembatan Rp 18 M ambruk 3 minggu setelah diresmikan.' },
+  { cat: 'korupsi', txt: 'Bansos diembat oknum, dibagi pakai amplop sambil minta KTP difoto.' },
+  { cat: 'korupsi', txt: 'Anggaran "pencegahan korupsi" naik 200%, korupsi juga naik 200%.' },
+  { cat: 'artis', txt: 'Selebgram putus, posting quote sedih, dapat endorse skincare anti-galau.' },
+  { cat: 'artis', txt: 'Penyanyi dangdut buka konser di luar negeri, sold out di Hong Kong.' },
+  { cat: 'artis', txt: 'Artis A nikah ke-3 kalinya. Mantan kedua jadi MC.' },
+  { cat: 'artis', txt: 'Influencer naik haji, semua jamaah kena hape diarahkan ke kameranya.' },
+  { cat: 'tiktok', txt: 'Bocah SD viral ngata-ngatain guru, orangtua minta maaf di live, dapat saweran Rp 12jt.' },
+  { cat: 'tiktok', txt: 'Tren joget "sayang aku" diserbu PNS, kabid disorot karena ikut.' },
+  { cat: 'tiktok', txt: 'Couple TikTok rumah tangga drama edisi 47, sudah sponsor air kemasan.' },
+  { cat: 'tiktok', txt: 'Live "sultan" bagi uang ternyata pakai uang main monopoli.' },
+  { cat: 'tiktok', txt: 'Bocil 10 tahun viral karena chord gitar, langsung tampil di TV nasional.' },
+  { cat: 'ekonomi', txt: 'Rupiah melemah, menko bilang "fundamental ekonomi kuat".' },
+  { cat: 'ekonomi', txt: 'Harga cabai tembus Rp 120rb/kg, ibu-ibu pasar marah ke kamera.' },
+  { cat: 'ekonomi', txt: 'BBM naik Rp 1.500. "Demi subsidi tepat sasaran".' },
+  { cat: 'ekonomi', txt: 'Pajak hiburan naik 40%, klub malam protes, restoran ikut.' },
+  { cat: 'ekonomi', txt: 'Pinjol resmi 5 perusahaan ditutup OJK, 47 yang ilegal tetap jalan.' },
+  { cat: 'absurd', txt: 'Pria di Lampung nikahin guling, undang RT, sumbangan dipakai beli motor.' },
+  { cat: 'absurd', txt: 'Maling ayam tertangkap karena upload TikTok dari TKP.' },
+  { cat: 'absurd', txt: 'RT adu bacot dengan RW soal jadwal kerja bakti, viral di grup WA.' },
+  { cat: 'absurd', txt: 'Anak SD dipanggil polisi karena nyanyi lagu kritis di YouTube.' },
+  { cat: 'absurd', txt: 'Pria nge-glamping di belakang Indomaret 24 jam, viral di X.' },
+  { cat: 'mistis', txt: 'Pohon beringin di alun-alun bergerak sendiri jam 2 pagi, sudah ada paranormal.' },
+  { cat: 'mistis', txt: 'Bocah di Yogya bisa baca pikiran orang, sudah diundang podcast.' },
+  { cat: 'mistis', txt: 'Pabrik baru di Bekasih tutup karena penampakan, satpam mundur 12 orang.' }
+];
+
+const HOBI_POOL = ['gaming','futsal','gym','K-pop','mancing','konser','fotografi','motoran','masak','berkebun','baca buku','main band'];
+
+const RELASI_TEMPLATE = [
+  { label: 'Mama', type: 'keluarga', baseTrust: [50, 80] },
+  { label: 'Bapak', type: 'keluarga', baseTrust: [40, 70] },
+  { label: 'Adik', type: 'keluarga', baseTrust: [50, 80] },
+  { label: 'Kakak', type: 'keluarga', baseTrust: [40, 75] },
+  { label: 'Sepupu', type: 'keluarga', baseTrust: [30, 70] },
+  { label: 'Bestie SMA', type: 'teman', baseTrust: [55, 85] },
+  { label: 'Bestie Kuliah', type: 'teman', baseTrust: [50, 80] },
+  { label: 'Geng nongkrong', type: 'teman', baseTrust: [40, 70] },
+  { label: 'Pacar', type: 'romantis', baseTrust: [40, 80] },
+  { label: 'Mantan', type: 'romantis', baseTrust: [10, 40] },
+  { label: 'Bos kerja', type: 'kerja', baseTrust: [30, 60] },
+  { label: 'Kolega', type: 'kerja', baseTrust: [30, 65] },
+  { label: 'Tetangga sebelah', type: 'sosial', baseTrust: [20, 60] },
+  { label: 'Bu RT', type: 'sosial', baseTrust: [30, 70] },
+  { label: 'Bu Yati warung', type: 'sosial', baseTrust: [45, 75] },
+  { label: 'Rentenir kompleks', type: 'musuh', baseTrust: [5, 25] }
+];
+
+const WEATHER_POOL = [
+  { id: 'cerah', label: 'Cerah', effect: {} },
+  { id: 'gerimis', label: 'Gerimis', effect: { hygiene: -3 } },
+  { id: 'hujan', label: 'Hujan Deras', effect: { stress: 3, hygiene: -5 } },
+  { id: 'banjir', label: 'Banjir Lokal', effect: { stress: 8, hygiene: -10, health: -3 } },
+  { id: 'panas', label: 'Panas 36°', effect: { stress: 4, energi: -3 } },
+  { id: 'mendung', label: 'Mendung', effect: { happiness: -2 } },
+  { id: 'kabut-asap', label: 'Kabut Asap', effect: { health: -4, happiness: -2 } },
+  { id: 'pancaroba', label: 'Pancaroba', effect: { health: -2, stress: 2 } }
+];
+
+// ============ STATE ============
+let S = null;
+let modalOpen = false;
+
+// ============ PERSISTENCE ============
+// Single source-of-truth save: full S object + any pending inheritance
+// handoff (so a refresh mid-spawn after dying still carries warisan).
+// Versioned key — bump when schema breaks compatibility.
+const SAVE_KEY = 'hidup-konoha-save-v2';
+const PENDING_INH_KEY = 'hidup-konoha-pending-inh-v2';
+let saveDebounceTimer = null;
+let savePillResetTimer = null;
+
+function setSavePill(state, text) {
+  const el = document.getElementById('save-pill');
+  if (!el) return;
+  el.classList.remove('saving','saved','error');
+  if (state) el.classList.add(state);
+  if (text) el.textContent = text;
+  if (savePillResetTimer) clearTimeout(savePillResetTimer);
+  if (state === 'saved') {
+    savePillResetTimer = setTimeout(() => {
+      el.classList.remove('saved');
+      const ts = new Date();
+      const hh = String(ts.getHours()).padStart(2,'0');
+      const mm = String(ts.getMinutes()).padStart(2,'0');
+      el.textContent = `✓ tersimpan ${hh}:${mm}`;
+    }, 1100);
+  }
+}
+
+function saveGame(silent) {
+  if (!S) return false;
+  try {
+    const payload = {
+      v: 2,
+      savedAt: Date.now(),
+      S: S
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+    if (!silent) setSavePill('saved', '✓ tersimpan');
+    return true;
+  } catch (e) {
+    // QuotaExceeded or storage disabled (private mode, blocked, etc.)
+    console.warn('save failed:', e);
+    if (!silent) setSavePill('error', '⚠ save gagal');
+    return false;
+  }
+}
+
+// Debounced autosave — render() is called after every state mutation,
+// so we hook there. Debounce prevents thrashing during burst renders.
+function scheduleAutoSave() {
+  if (!S || S.dead) return;
+  if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+  setSavePill('saving', '… menyimpan');
+  saveDebounceTimer = setTimeout(() => {
+    saveGame(false);
+  }, 400);
+}
+
+function manualSave() {
+  if (!S) {
+    setSavePill('error', '⚠ belum ada game');
+    setTimeout(() => setSavePill(null, '— belum tersimpan'), 1500);
+    return;
+  }
+  if (saveDebounceTimer) { clearTimeout(saveDebounceTimer); saveDebounceTimer = null; }
+  saveGame(false);
+}
+
+function loadSavedGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const payload = JSON.parse(raw);
+    if (!payload || payload.v !== 2 || !payload.S) return null;
+    // sanity: must have the core shape
+    const s = payload.S;
+    if (!s.char || !s.stats || !s.lokasi || typeof s.day !== 'number') return null;
+    // ── Migration: fields added after initial v2 release ──
+    // salaryMult: per-player salary multiplier (default 1x)
+    if (typeof s.salaryMult !== 'number') s.salaryMult = 1;
+    // lastPaidDay: absolute day last paid / job started (0 = never)
+    if (typeof s.lastPaidDay !== 'number') s.lastPaidDay = 0;
+    // payday: absolute day of next payday. Old saves stored it as a day-of-month (1–30).
+    // If old value looks like a day-of-month (≤ 30) and the player has a job, convert to an
+    // absolute day that is at least 1 day in the future so the cycle resumes cleanly.
+    if (typeof s.payday !== 'number') {
+      s.payday = 0;
+    } else if (s.payday > 0 && s.payday <= 30 && s.job && s.job !== 'pengangguran') {
+      // Heuristic: old-style modulo value. Bump it forward by ~15 days from current day.
+      s.payday = s.day + 15;
+    }
+    // bills.listrik: added later; default 0
+    if (s.bills && typeof s.bills.listrik !== 'number') s.bills.listrik = 0;
+    // pendingBills: default object
+    if (!s.pendingBills) s.pendingBills = { kontrakan: false };
+    // flags: default object
+    if (!s.flags) s.flags = {};
+    return payload;
+  } catch (e) {
+    console.warn('load failed:', e);
+    return null;
+  }
+}
+
+function clearSave() {
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch (e) { /* ignore */ }
+}
+
+function savePendingInheritance(inh) {
+  try {
+    if (inh) localStorage.setItem(PENDING_INH_KEY, JSON.stringify(inh));
+    else localStorage.removeItem(PENDING_INH_KEY);
+  } catch (e) { /* ignore */ }
+}
+
+function loadPendingInheritance() {
+  try {
+    const raw = localStorage.getItem(PENDING_INH_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) { return null; }
+}
+
+function formatSaveAge(ts) {
+  const diff = Date.now() - ts;
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return 'baru saja';
+  if (min < 60) return min + ' menit lalu';
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return hr + ' jam lalu';
+  const d = Math.floor(hr / 24);
+  return d + ' hari lalu';
+}
+
+// ============ SPAWN ============
+function generateSpawnCandidates(n = 4) {
+  const candidates = [];
+  for (let i = 0; i < n; i++) {
+    const bg = pick(BACKGROUND_LIST);
+    const validNeighs = NEIGHBORHOOD_ARCH.filter(nh =>
+      nh.class === bg.loc_class ||
+      (bg.loc_class === 'sangat-miskin' && nh.class === 'miskin') ||
+      (bg.loc_class === 'miskin' && nh.class === 'sangat-miskin') ||
+      (bg.loc_class === 'lower' && nh.class === 'miskin') ||
+      (bg.loc_class === 'middle' && nh.class === 'lower') ||
+      (bg.loc_class === 'kaya' && nh.class === 'middle')
+    );
+    const neigh = pick(validNeighs.length ? validNeighs : NEIGHBORHOOD_ARCH);
+    const pulauName = pick(Object.keys(PULAU));
+    const kota = pick(PULAU[pulauName]);
+    candidates.push({
+      bg, neigh, pulauName, kota,
+      name: pick(NAMA_DEPAN) + ' ' + pick(NAMA_BLKG),
+      gender: chance(0.5) ? 'Laki' : 'Perempuan',
+      umur: irand(20, 32),
+      hobi: pick(HOBI_POOL)
+    });
+  }
+  return candidates;
+}
+
+function newGame(spawn) {
+  modalOpen = false;
+  const bg = spawn.bg;
+  const neigh = spawn.neigh;
+  const inh = spawn._inheritance || null;
+  S = {
+    char: {
+      name: spawn.name, gender: spawn.gender, umur: spawn.umur,
+      umurStart: spawn.umur, bgLabel: bg.label, bgQuote: bg.quote, hobi: spawn.hobi,
+      ancestor: inh ? inh.fromName : null
+    },
+    day: 1, timeOfDay: 0, actionTaken: false,
+    lokasi: {
+      pulau: spawn.pulauName, kota: spawn.kota, neigh: neigh.label, neighId: neigh.id,
+      class: neigh.class, biaya: neigh.biaya, peluang: neigh.peluang, vibe: neigh.vibe
+    },
+    money: irand(bg.money[0], bg.money[1]) + (inh ? inh.inheritedMoney : 0),
+    debts: [],
+    job: 'pengangguran', jobStreak: 0,
+    payday: irand(7, 14), lastSalary: 0,
+    // lastPaidDay = hari absolut terakhir kali dibayar (atau hari mulai kerja kalau belum pernah gajian)
+    // dipake buat hitung gaji pro-rata kalau resign sebelum gajian berikutnya.
+    lastPaidDay: 0,
+    // salaryMult = pengali gaji per-player (untuk promosi/demosi). Hindari mutate PEKERJAAN global!
+    salaryMult: 1,
+    stats: {
+      energi: 80, lapar: 60, hygiene: 75, health: 85,
+      stress: 10 + Math.round(bg.trauma * 0.18) + (inh ? Math.round(inh.trauma * 0.1) : 0),
+      happiness: 55
+    },
+    skills: {
+      'kerja keras': irand(20, 50),
+      'public speaking': bg.traits.public_speaking || irand(10, 30),
+      'coding': bg.traits.coding || irand(5, 20),
+      'driving': bg.traits.driving || irand(20, 50),
+      'negosiasi': bg.traits.negotiation || irand(10, 35),
+      'memasak': irand(15, 50)
+    },
+    hidden: {
+      luck: irand(35, 70) + (inh ? Math.round((inh.luck - 50) * 0.3) : 0),
+      trauma: bg.trauma + (inh ? Math.round(inh.trauma * 0.6) : 0),
+      loneliness: irand(20, 50),
+      ordal: bg.ordal + (inh ? Math.round(inh.ordal * 0.5) : 0),
+      street_smart: bg.traits.street_smart || irand(15, 50),
+      family_burden: bg.burden + (inh ? Math.round(inh.family_burden * 0.4) : 0),
+      charm: bg.traits.charm || irand(20, 55)
+    },
+    relations: [], addictions: {}, newsBuffer: [], logBuffer: [],
+    lastJobApplyDay: -10, viralCounter: 0,
+    bills: { kontrakan: Math.round(neigh.biaya * 700000), kontrakanDueDay: 5, listrik: 0, kontrakanOverdueSince: null },
+    pendingBills: { kontrakan: false },
+    weather: pick(WEATHER_POOL),
+    flags: {},
+    missions: [], completedMissions: 0, completedMissionsList: [],
+    generation: inh ? inh.generation : 1, dead: false, causeOfDeath: null
+  };
+  // clamp the inherited stats
+  S.hidden.luck = clamp(S.hidden.luck, 0, 100);
+  S.hidden.trauma = clamp(S.hidden.trauma, 0, 100);
+  S.hidden.ordal = clamp(S.hidden.ordal, 0, 100);
+  S.hidden.family_burden = clamp(S.hidden.family_burden, 0, 100);
+  S.stats.stress = clamp(S.stats.stress, 0, 100);
+
+  if (bg.debt[1] > 0) {
+    const debtAmt = irand(bg.debt[0], bg.debt[1]);
+    if (debtAmt > 0) {
+      S.debts.push({
+        src: pick(['Pinjol legal','Hutang teman lama','Cicilan motor','Paylater Shopee','Hutang ke saudara']),
+        amount: debtAmt, bunga: chance(0.5) ? 0.06 : 0.12
+      });
+    }
+  }
+
+  // inheritance: warisan hutang
+  if (inh && inh.inheritedDebt > 50000) {
+    S.debts.push({
+      src: `Warisan hutang ${inh.fromName}`,
+      amount: inh.inheritedDebt,
+      bunga: 0.04
+    });
+  }
+
+  const relPool = [...RELASI_TEMPLATE];
+  for (let i = 0; i < irand(4, 7) && relPool.length; i++) {
+    const t = relPool.splice(Math.floor(Math.random() * relPool.length), 1)[0];
+    S.relations.push({ label: t.label, type: t.type, trust: irand(t.baseTrust[0], t.baseTrust[1]), debt: 0, lastInteract: 0 });
+  }
+
+  log(`Hari pertama hidup di ${S.lokasi.neigh}, ${S.lokasi.kota}.`, 'good');
+  log(`Background: ${bg.label}. "${bg.quote}"`, 'event');
+  log(`Vibe lingkungan: ${S.lokasi.vibe}.`, '');
+  if (inh) {
+    log(`Lo lahir sebagai generasi ke-${S.generation} dari ${inh.fromName}. Trauma keluarga: ${inh.trauma}.`, 'event');
+    if (inh.inheritedMoney > 100000) log(`Warisan uang ${rupiah(inh.inheritedMoney)} masuk rekening.`, 'good');
+    if (inh.inheritedDebt > 50000) log(`Tapi juga warisan hutang ${rupiah(inh.inheritedDebt)} dari orangtua.`, 'bad');
+  }
+
+  generateInitialMissions();
+  rollNews(3);
+  render();
+}
+
+// ============ MISSION ============
+const MISSION_TEMPLATES = {
+  cariKerja: {
+    label: 'Cari Pekerjaan Pertama', desc: () => 'Lo nganggur. Dompet menipis. Lamar kerja.',
+    type: 'main', check: () => S.job !== 'pengangguran',
+    reward: () => { S.stats.happiness += 8; S.hidden.luck += 2; },
+    rewardText: '+happiness +luck',
+    canSpawn: () => S.job === 'pengangguran'
+  },
+  bayarKontrakan: {
+    label: 'Bayar Kontrakan', desc: () => `Kontrakan jatuh tempo: ${rupiah(S.bills.kontrakan)}.`,
+    type: 'urgent', check: () => !S.pendingBills.kontrakan,
+    reward: () => { S.stats.stress -= 5; }, rewardText: '-stress',
+    canSpawn: () => S.pendingBills.kontrakan
+  },
+  lunasiPinjol: {
+    label: 'Lunasi Hutang', desc: () => 'Debt collector mulai aktif. Lunasi minimal 1 hutang.',
+    type: 'urgent', setup: m => { m.initialDebts = S.debts.length; },
+    check: m => S.debts.length < m.initialDebts,
+    reward: () => { S.stats.stress -= 15; S.stats.happiness += 10; }, rewardText: '-stress, +happy',
+    canSpawn: () => S.debts.length >= 2
+  },
+  makanRumah: {
+    label: 'Makan Masakan Rumah', desc: () => 'Ibu kirim WA: "udah makan belum?" Makan masakan rumah.',
+    type: 'side', check: m => m.done,
+    reward: () => { S.stats.happiness += 12; S.hidden.loneliness -= 8; }, rewardText: '+happy -loneliness',
+    canSpawn: () => S.relations.find(r => r.label === 'Mama' || r.label === 'Bapak')
+  },
+  uangSeratus: {
+    label: 'Punya Saldo Rp 100rb', desc: () => 'Survive sampai punya minimal Rp 100rb.',
+    type: 'main', check: () => S.money >= 100000,
+    reward: () => { S.stats.happiness += 5; }, rewardText: '+happiness',
+    canSpawn: () => S.money < 50000 && !S.completedMissionsList.includes('uangSeratus')
+  },
+  tabunganJuta: {
+    label: 'Punya Tabungan Rp 1 juta', desc: () => 'Kumpulin sampai punya saldo Rp 1jt.',
+    type: 'main', check: () => S.money >= 1000000,
+    reward: () => { S.stats.happiness += 10; S.hidden.luck += 3; }, rewardText: '+happy +luck',
+    canSpawn: () => S.money < 800000 && S.money >= 100000
+  },
+  upgradeKarier: {
+    label: 'Upgrade Karier', desc: () => 'Cari kerjaan tier lebih tinggi.',
+    type: 'side', setup: m => { m.startTier = PEKERJAAN.find(p => p.id === S.job)?.tier || 0; },
+    check: m => (PEKERJAAN.find(p => p.id === S.job)?.tier || 0) > m.startTier,
+    reward: () => { S.stats.happiness += 15; }, rewardText: '+happiness',
+    canSpawn: () => S.job !== 'pengangguran' && (PEKERJAAN.find(p => p.id === S.job)?.tier || 0) < 4
+  },
+  kenalanBaru: {
+    label: 'Kenalan Baru', desc: () => 'Tambah 1 relasi baru lewat nongkrong.',
+    type: 'side', setup: m => { m.startCount = S.relations.length; },
+    check: m => S.relations.length > m.startCount,
+    reward: () => { S.hidden.loneliness -= 10; S.stats.happiness += 5; }, rewardText: '-loneliness',
+    canSpawn: () => S.relations.length < 10
+  },
+  hindarGodaan: {
+    label: 'Hindari Godaan 3 Hari', desc: () => 'Jangan klik addiction 3 hari berturut.',
+    type: 'side', setup: m => { m.startDay = S.day; m.startAdd = Object.values(S.addictions).reduce((s, v) => s + v, 0); },
+    check: m => (S.day - m.startDay >= 3) && (Object.values(S.addictions).reduce((s, v) => s + v, 0) === m.startAdd),
+    failCheck: m => Object.values(S.addictions).reduce((s, v) => s + v, 0) > m.startAdd,
+    reward: () => { S.stats.happiness += 12; S.hidden.trauma -= 5; }, rewardText: '+happy -trauma',
+    canSpawn: () => Object.keys(S.addictions).length > 0 && S.day > 3
+  },
+  healingDulu: {
+    label: 'Healing Dulu', desc: () => 'Stress tinggi. Healing minimal 1 kali.',
+    type: 'side', setup: m => { m.startStress = S.stats.stress; },
+    check: m => S.stats.stress < m.startStress - 15,
+    reward: () => { S.stats.happiness += 5; }, rewardText: '+happy',
+    canSpawn: () => S.stats.stress > 65
+  },
+  pindahKota: {
+    label: 'Pindah Kota', desc: () => 'Reset lingkungan, reset peluang.',
+    type: 'side', setup: m => { m.startKota = S.lokasi.kota; },
+    check: m => S.lokasi.kota !== m.startKota,
+    reward: () => { S.stats.happiness += 8; S.hidden.luck += 5; }, rewardText: '+happy +luck',
+    canSpawn: () => S.money >= 1500000 && S.day > 15 && S.stats.stress > 50
+  },
+  nyobaHustle: {
+    label: 'Coba Side Hustle', desc: () => 'Coba 1 side hustle.',
+    type: 'side', check: m => m.done,
+    reward: () => { S.skills['negosiasi'] = (S.skills['negosiasi'] || 0) + 5; }, rewardText: '+skill negosiasi',
+    canSpawn: () => S.day > 2 && !S.completedMissionsList.includes('nyobaHustle')
+  },
+  survive7days: {
+    label: 'Survive 7 Hari', desc: () => 'Hidup selama 7 hari tanpa mati.',
+    type: 'main', check: () => S.day >= 8,
+    reward: () => { S.stats.happiness += 10; S.hidden.luck += 5; }, rewardText: '+happy +luck',
+    canSpawn: () => S.day < 7 && !S.completedMissionsList.includes('survive7days')
+  },
+  bersihinHutang: {
+    label: 'Bebas Hutang', desc: () => 'Lunasin semua hutang.',
+    type: 'main', check: () => S.debts.length === 0,
+    reward: () => { S.stats.happiness += 25; S.stats.stress -= 25; }, rewardText: '+++happiness',
+    canSpawn: () => S.debts.length > 0 && S.money > 500000
+  }
+};
+
+function generateInitialMissions() {
+  if (S.job === 'pengangguran') addMission('cariKerja');
+  addMission('uangSeratus');
+  addMission('survive7days');
+}
+
+function addMission(key) {
+  if (S.missions.find(m => m.key === key)) return;
+  const tpl = MISSION_TEMPLATES[key];
+  if (!tpl) return;
+  const m = { key, label: tpl.label, desc: tpl.desc(), type: tpl.type, rewardText: tpl.rewardText, addedDay: S.day };
+  if (tpl.setup) tpl.setup(m);
+  S.missions.push(m);
+  log('Misi baru: ' + tpl.label, 'mission');
+}
+
+function checkMissions() {
+  for (let i = S.missions.length - 1; i >= 0; i--) {
+    const m = S.missions[i];
+    const tpl = MISSION_TEMPLATES[m.key];
+    if (!tpl) { S.missions.splice(i, 1); continue; }
+    m.desc = tpl.desc();
+    if (tpl.failCheck && tpl.failCheck(m)) {
+      log('Misi gagal: ' + m.label, 'bad');
+      S.missions.splice(i, 1);
+      continue;
+    }
+    if (tpl.check(m)) {
+      log('✓ Misi selesai: ' + m.label + ' (' + m.rewardText + ')', 'mission');
+      tpl.reward();
+      S.completedMissions++;
+      S.completedMissionsList.push(m.key);
+      S.missions.splice(i, 1);
+    }
+  }
+  const openSlots = 3 - S.missions.length;
+  if (openSlots > 0) {
+    const candidates = Object.keys(MISSION_TEMPLATES).filter(k => {
+      if (S.missions.find(m => m.key === k)) return false;
+      const tpl = MISSION_TEMPLATES[k];
+      if (!tpl.canSpawn || !tpl.canSpawn()) return false;
+      if (S.completedMissionsList.includes(k)) return false;
+      return true;
+    });
+    if (candidates.length > 0) addMission(pick(candidates));
+  }
+}
+
+function markMissionDone(key) {
+  const m = S.missions.find(x => x.key === key);
+  if (m) m.done = true;
+}
+
+// ============ LOG / NEWS ============
+function log(msg, type = '') {
+  if (!S) return;
+  S.logBuffer.push({ time: ['PAGI','SIANG','SORE','MALAM'][S.timeOfDay], msg, type, day: S.day });
+  if (S.logBuffer.length > 80) S.logBuffer.shift();
+  renderLog();
+}
+
+function rollNews(n = 1) {
+  for (let i = 0; i < n; i++) S.newsBuffer.unshift({ ...pick(BERITA_POOL), day: S.day });
+  if (S.newsBuffer.length > 12) S.newsBuffer.length = 12;
+}
+
+// ============ TIME ============
+function advanceTime(skipReq = false) {
+  if (!S || S.dead || modalOpen) return;
+  if (!skipReq && !S.actionTaken) {
+    showToast('Pilih aksi dulu', 'satu aksi per blok waktu');
+    return;
+  }
+  S.timeOfDay++;
+  S.actionTaken = false;
+  tickStats();
+  if (S.timeOfDay > 3) {
+    S.timeOfDay = 0;
+    S.day++;
+    S.char.umur += 1 / 365;
+    newDay();
+  }
+  if (chance(0.18)) randomEvent();
+  if (chance(0.30)) rollNews(1);
+  if (chance(0.20)) S.weather = pick(WEATHER_POOL);
+  // weather effects per tick
+  const w = S.weather.effect;
+  if (w.stress) S.stats.stress = clamp(S.stats.stress + w.stress / 4, 0, 100);
+  if (w.energi) S.stats.energi = clamp(S.stats.energi + w.energi / 4, 0, 100);
+  if (w.hygiene) S.stats.hygiene = clamp(S.stats.hygiene + w.hygiene / 4, 0, 100);
+  if (w.health) S.stats.health = clamp(S.stats.health + w.health / 4, 0, 100);
+  checkMissions();
+  checkVitals();
+  render();
+}
+
+function tickStats() {
+  S.stats.lapar = clamp(S.stats.lapar - irand(3, 7), 0, 100);
+  S.stats.energi = clamp(S.stats.energi - irand(2, 5), 0, 100);
+  S.stats.hygiene = clamp(S.stats.hygiene - irand(2, 4), 0, 100);
+  if (S.stats.lapar < 10) {
+    S.stats.health = clamp(S.stats.health - 2, 0, 100);
+    S.stats.stress = clamp(S.stats.stress + 3, 0, 100);
+  }
+  if (S.stats.stress > 75) {
+    S.stats.happiness = clamp(S.stats.happiness - 1, 0, 100);
+    if (chance(0.5)) S.stats.health = clamp(S.stats.health - 1, 0, 100);
+  }
+  if (S.stats.hygiene < 20) S.stats.health = clamp(S.stats.health - 1, 0, 100);
+  if (S.stats.energi < 20) S.stats.stress = clamp(S.stats.stress + 2, 0, 100);
+  // skill decay sangat lambat - 1 in ~25 ticks
+  if (chance(0.04)) {
+    const keys = Object.keys(S.skills);
+    const k = pick(keys);
+    if (S.skills[k] > 5) S.skills[k] = clamp(S.skills[k] - 0.5, 0, 100);
+  }
+}
+
+function newDay() {
+  for (const d of S.debts) d.amount = Math.round(d.amount * (1 + d.bunga / 30));
+  // listrik billed once a month on day 10
+  if ((S.day % 30) === 10) {
+    const baseListrik = Math.round(80000 + S.lokasi.biaya * 100000 + (S.bills.listrik || 0));
+    if (S.money >= baseListrik) {
+      S.money -= baseListrik;
+      log(`Listrik bulan ini ${rupiah(baseListrik)} kepotong otomatis.`, '');
+    } else {
+      S.debts.push({ src: 'PLN nunggak', amount: baseListrik, bunga: 0.02 });
+      log(`Listrik nggak kebayar (${rupiah(baseListrik)}). Listrik nyaris dicabut.`, 'bad');
+      S.stats.stress = clamp(S.stats.stress + 6, 0, 100);
+    }
+    S.bills.listrik = 0;
+  }
+  // Gajian: S.payday adalah hari absolut kapan gajian berikutnya cair (bukan modulo)
+  if (S.job !== 'pengangguran' && S.payday > 0 && S.day >= S.payday) {
+    const p = PEKERJAAN.find(p => p.id === S.job);
+    if (p && !p.harian && !p.viral) {
+      // Pengali gaji per-player, bukan mutate PEKERJAAN global
+      const mult = S.salaryMult || 1;
+      const gaji = Math.round(irand(p.gaji[0], p.gaji[1]) * mult);
+      S.money += gaji;
+      S.lastSalary = gaji;
+      S.lastPaidDay = S.day;
+      // Jadwalkan gajian berikutnya 30 hari lagi
+      S.payday = S.day + 30;
+      log(`GAJIAN ${rupiah(gaji)} masuk rekening. Gajian berikutnya hari ke-${S.payday}.`, 'good');
+      showToast('GAJIAN', rupiah(gaji));
+    }
+  }
+  if ((S.day % 30) === S.bills.kontrakanDueDay) {
+    S.pendingBills.kontrakan = true;
+    S.bills.kontrakanOverdueSince = S.day;
+    log(`Kontrakan jatuh tempo: ${rupiah(S.bills.kontrakan)}. Bayar atau diusir.`, 'bad');
+  }
+  if (S.pendingBills.kontrakan && S.bills.kontrakanOverdueSince && (S.day - S.bills.kontrakanOverdueSince) > 5) {
+    log('Ibu kos ngamuk via WA. Tinggal hitungan hari sebelum diusir.', 'bad');
+    S.stats.stress = clamp(S.stats.stress + 8, 0, 100);
+    if ((S.day - S.bills.kontrakanOverdueSince) > 12 && chance(0.3)) {
+      log('Ibu kos beneran usir lo. Barang di gerbang. Lo pindah ke kos lebih kumuh.', 'bad');
+      S.bills.kontrakan = Math.round(S.bills.kontrakan * 0.65);
+      S.lokasi.biaya = Math.max(0.30, S.lokasi.biaya - 0.15);
+      S.lokasi.vibe = 'kos darurat, kamar 2x2, kamar mandi luar';
+      S.pendingBills.kontrakan = false;
+      S.bills.kontrakanOverdueSince = null;
+      S.stats.stress = clamp(S.stats.stress + 20, 0, 100);
+      S.stats.happiness = clamp(S.stats.happiness - 15, 0, 100);
+    }
+  }
+  if (S.debts.length > 0 && chance(0.4)) {
+    const d = pick(S.debts);
+    log(pick([
+      `DC ${d.src} spam WA: "BAYAR HUTANG LO KOPLAK!"`,
+      `${d.src} telpon mama lo. Mama nelpon balik: "kamu kenapa?"`,
+      `Foto wajah lo di-share grup WA kompleks oleh DC ${d.src}.`,
+      `${d.src} ancam "akan tindak hukum". Lo googling, ternyata bohong.`,
+      `DC ${d.src} dateng ke kos, ngerudet 30 menit, ibu kos liatin lo aneh.`
+    ]), 'bad');
+    S.stats.stress = clamp(S.stats.stress + irand(4, 9), 0, 100);
+  }
+  // daysToPay pakai selisih absolut — payday sudah absolut sejak v2 fix
+  const daysToPay = S.payday > 0 ? Math.max(0, S.payday - S.day) : 99;
+  if (daysToPay > 0 && daysToPay <= 5 && S.money < 200000) {
+    S.stats.stress = clamp(S.stats.stress + 4, 0, 100);
+    if (chance(0.5)) log(`Tanggal tua. Saldo ${rupiah(S.money)}. Mental tested.`, 'bad');
+  }
+  if (chance(0.06)) megaEvent();
+}
+
+function megaEvent() {
+  pick([
+    () => { log('BBM naik Rp 1.500. Semua biaya transport naik bulan ini.', 'event'); S.stats.stress = clamp(S.stats.stress + 8, 0, 100); },
+    () => { log(`Banjir besar di ${S.lokasi.neigh}. Akses kerja mampet 2 hari.`, 'event'); S.stats.health -= 4; S.stats.happiness -= 5; },
+    () => { log('Pemerintah luncurkan kebijakan pajak konten digital 3%.', 'event'); },
+    () => { log('Listrik mati 8 jam se-distrik. Kerjaan ngadat.', 'event'); S.stats.stress += 6; },
+    () => { log('Internet nasional dibatasi karena demo. Live mati, sosmed lag.', 'event'); },
+    () => { log('Cuaca panas ekstrem 38°. Tagihan listrik bengkak.', 'event'); S.bills.listrik = (S.bills.listrik || 150000) + 100000; },
+    () => { log('Skandal pejabat viral 3 hari. Semua orang debat di WA grup.', 'event'); S.stats.stress += 3; },
+    () => { log('Razia satpol PP di kawasan ini. Pedagang kabur.', 'event'); },
+    () => { log('Demonstrasi buruh blokir jalan utama. Macet 4 jam.', 'event'); S.stats.energi -= 5; },
+    () => { log('Tarif listrik naik 12%. Tagihan bulan depan tested.', 'event'); S.bills.listrik = (S.bills.listrik || 150000) + 50000; }
+  ])();
+}
+
+// ============ ACTIONS ============
+function generateAvailableActions() {
+  const out = [];
+  const tod = S.timeOfDay;
+
+  // 1. Lanjut/Tidur (selalu tersedia, jadi pemisah waktu)
+  out.push({
+    id: 'lanjut', type: 'time',
+    title: tod === 3 ? 'Tidur' : 'Lanjut →',
+    sub: tod === 3 ? '+energi, lewat hari' : `ke ${['Siang','Sore','Malam'][tod]}`,
+    cost: '', can: () => true, isTime: true,
+    run() {
+      if (tod === 3) {
+        S.stats.energi = clamp(S.stats.energi + 50, 0, 100);
+        S.stats.health = clamp(S.stats.health + 5, 0, 100);
+        S.stats.stress = clamp(S.stats.stress - 18, 0, 100);
+        S.stats.happiness = clamp(S.stats.happiness + 2, 0, 100);
+        log('Lo tidur. Mimpi: dikejar debt collector pake helm bebek.', 'good');
+      }
+      S.actionTaken = true;
+      advanceTime();
+    }
+  });
+
+  // 2. Makan (selalu, dengan 3 random menu dari pool)
+  if (true) {
+    const some = pickN(MAKANAN_POOL, 3);
+    out.push({
+      id: 'makan', title: 'Makan',
+      sub: `${some.length} pilihan hari ini`,
+      cost: '', can: () => true,
+      run() {
+        openModal({
+          title: 'Mau makan apa?',
+          sub: `Saldo: ${rupiah(S.money)}`,
+          choices: some.map(m => ({
+            label: `${m.nama} — ${rupiah(m.harga)}`,
+            hint: `${m.vibe} • kenyang +${m.kenyang} • happy +${m.hp}`,
+            disabled: m.harga > S.money,
+            run: () => {
+              S.money -= m.harga;
+              S.stats.lapar = clamp(S.stats.lapar + m.kenyang, 0, 100);
+              S.stats.happiness = clamp(S.stats.happiness + m.hp, 0, 100);
+              S.stats.health = clamp(S.stats.health + m.ht, 0, 100);
+              log(`Makan ${m.nama}. ${m.vibe}.`);
+              if (m.id === 'rumah') markMissionDone('makanRumah');
+              S.actionTaken = true;
+              advanceTime();
+            }
+          })),
+          cancellable: true
+        });
+      }
+    });
+  }
+
+  // 3. Mandi (selalu tersedia pagi/siang/sore)
+  if (tod !== 3) {
+    const mandiMsgs = [
+      'Mandi air dingin. Insight terbaik selalu muncul di kamar mandi.',
+      'Mandi panjang. 15 menit ngelamun di bawah shower, lumayan.',
+      'Keramas sekalian. Sedikit lebih manusia dari tadi.',
+      'Mandi sambil nyanyi pelan. Tetangga nggak ada yang komplen.',
+    ];
+    out.push({
+      id: 'mandi', type: 'good', title: 'Mandi',
+      sub: '+higiene, -stress, gratis',
+      cost: '',
+      can: () => true,
+      run() {
+        const stressDown = S.stats.hygiene < 40 ? 10 : 7;
+        S.stats.hygiene = clamp(S.stats.hygiene + 55, 0, 100);
+        S.stats.stress = clamp(S.stats.stress - stressDown, 0, 100);
+        S.stats.happiness = clamp(S.stats.happiness + 3, 0, 100);
+        log(pick(mandiMsgs), 'good');
+        S.actionTaken = true;
+        advanceTime();
+      }
+    });
+  }
+
+  // 4. Kerja (kalau punya kerjaan)
+  if (S.job !== 'pengangguran' && tod <= 1 && S.stats.energi >= 15) {
+    const p = PEKERJAAN.find(p => p.id === S.job);
+    out.push({
+      id: 'kerja', type: 'good', title: 'Kerja',
+      sub: p.nama + (p.harian ? ' (harian)' : ''),
+      cost: 'energi -' + Math.abs(p.energi),
+      can: () => true,
+      run() { doWork(p); }
+    });
+  }
+
+  // 5. Lamar kerja (jika nganggur / sudah cukup hari sejak terakhir)
+  if ((S.job === 'pengangguran' || S.day - S.lastJobApplyDay > 2) && tod <= 2 && S.stats.energi >= 10) {
+    out.push({
+      id: 'lamar', title: 'Lamar Kerja', sub: 'energi -10',
+      cost: `peluang: ${S.lokasi.peluang}`,
+      can: () => true,
+      run() { doApplyJob(); }
+    });
+  }
+
+  // 6. Side Hustle — random 2-3 dari pool
+  if (S.stats.energi >= 20 && tod <= 2) {
+    const hustlePool = [
+      { label: 'Jualan online reseller WA', risk: 0.15, min: 30000, max: 120000, energy: 12 },
+      { label: 'Joki tugas mahasiswa', risk: 0.25, min: 50000, max: 250000, energy: 18, skill: 'coding' },
+      { label: 'Live affiliate jam 2 pagi', risk: 0.60, min: 0, max: 800000, energy: 30 },
+      { label: 'Beli barang preorder, flip', risk: 0.45, min: -50000, max: 300000, energy: 14, modal: 50000 },
+      { label: 'Joki Mobile Legend rank', risk: 0.20, min: 30000, max: 200000, energy: 25 },
+      { label: 'Reseller skincare gak jelas', risk: 0.40, min: -30000, max: 150000, energy: 10, modal: 30000 },
+      { label: 'Jaga warung Bu Yati', risk: 0.10, min: 40000, max: 80000, energy: 20 },
+      { label: 'Bikin caption brand kecil', risk: 0.30, min: 50000, max: 200000, energy: 12, skill: 'public speaking' },
+      { label: 'Drop point pinjol (bahaya)', risk: 0.30, min: 100000, max: 500000, energy: 8, danger: true, moral: -3 }
+    ];
+    const some = pickN(hustlePool, irand(2, 3));
+    out.push({
+      id: 'hustle', type: 'hustle', title: 'Side Hustle',
+      sub: `${some.length} opsi hari ini`,
+      cost: '', can: () => true,
+      run() {
+        openModal({
+          title: 'Pilih side hustle',
+          sub: 'Cuan cepet jarang aman.',
+          choices: some.map(h => ({
+            label: h.label,
+            hint: `gagal ${(h.risk * 100).toFixed(0)}% • energi -${h.energy}${h.modal ? ' • modal ' + rupiah(h.modal) : ''}${h.danger ? ' • BAHAYA' : ''}`,
+            disabled: h.modal && S.money < h.modal,
+            run: () => doHustle(h)
+          })),
+          cancellable: true
+        });
+      }
+    });
+  }
+
+  // 7. Nongkrong
+  if (tod >= 1 && S.stats.energi >= 10) {
+    const harga = irand(25000, 75000);
+    out.push({
+      id: 'nongkrong', type: 'good', title: 'Nongkrong',
+      sub: 'cafe / angkringan', cost: rupiah(harga),
+      can: () => S.money >= harga - 10000,
+      run() { doNongkrong(harga); }
+    });
+  }
+
+  // 8. Healing (kalau stress >= 40 & saldo cukup) — random 3 dari pool
+  if (S.stats.stress >= 40 && S.money >= 50000) {
+    const healingPool = [
+      { label: 'Jalan pagi sendirian', harga: 0, stress: 12, happy: 8 },
+      { label: 'Rebahan + podcast favorit', harga: 0, stress: 10, happy: 6 },
+      { label: 'Masak sendiri di rumah', harga: 15000, stress: 14, happy: 10 },
+      { label: 'Ngobrol curhat sama bestie', harga: 0, stress: 16, happy: 12 },
+      { label: 'Konser musik indie', harga: 250000, stress: 32, happy: 20 },
+      { label: `Workshop hobi (${S.char.hobi})`, harga: 280000, stress: 28, happy: 22 },
+      { label: 'Spa + massage 2 jam', harga: 500000, stress: 45, happy: 18 },
+      { label: 'Solo travel kota sebelah', harga: 350000, stress: 38, happy: 15, dur: 1 },
+      { label: 'Sewa Airbnb 1 malam', harga: 600000, stress: 42, happy: 18, dur: 1 },
+      { label: 'Beli skincare baru', harga: 380000, stress: 22, happy: 14 },
+      { label: 'Therapy session', harga: 450000, stress: 50, happy: 10, trauma: -10 },
+      { label: 'Karaoke private + bestie', harga: 220000, stress: 35, happy: 20 },
+      { label: 'Liburan ke Bali 3 hari', harga: 2500000, stress: 75, happy: 30, dur: 3 },
+    ];
+    const some = pickN(healingPool, 4);
+    out.push({
+      id: 'healing', type: 'good', title: 'Healing', sub: 'bahasa anak senja: keluar uang',
+      cost: '', can: () => true,
+      run() {
+        openModal({
+          title: 'Healing apa?',
+          sub: 'Bahagia sementara, tagihan menetap.',
+          choices: some.map(h => ({
+            label: `${h.label} — ${rupiah(h.harga)}`,
+            hint: `stress -${h.stress}, happy +${h.happy}${h.dur ? ', skip ' + h.dur + ' hari' : ''}`,
+            disabled: S.money < h.harga,
+            run: () => doHealing(h)
+          })),
+          cancellable: true
+        });
+      }
+    });
+  }
+
+  // 9. Godaan — random 3
+  if (tod >= 1) {
+    const godaanPool = [
+      { id: 'judol', label: 'Judi online slot', sub: 'jackpot 7%, kalah 93%' },
+      { id: 'doomscroll', label: 'Doomscroll 4 jam', sub: 'energi habis, FYP rusak otak' },
+      { id: 'shopee', label: 'Shopee impulse 250rb', sub: '7 item dateng, 1 berguna' },
+      { id: 'vape', label: 'Vape pod baru', sub: 'addiction +1' },
+      { id: 'rokok', label: 'Beli rokok sebungkus', sub: 'health- stress-' },
+      { id: 'judol-besar', label: 'Live judi internasional', sub: 'risiko ekstrim' },
+      { id: 'gacha', label: 'Top up gacha game', sub: 'banner SSR, dompet kosong' }
+    ];
+    const some = pickN(godaanPool, 3);
+    out.push({
+      id: 'godaan', type: 'bad', title: 'Godaan',
+      sub: 'jalur destruktif', cost: 'mental kena',
+      can: () => true,
+      run() {
+        openModal({
+          title: 'Yakin?', sub: 'Dopamine sementara, problem permanent.',
+          choices: some.map(g => ({ label: g.label, hint: g.sub, run: () => doGodaan(g) })),
+          cancellable: true
+        });
+      }
+    });
+  }
+
+  // 10. Pinjol darurat
+  if (S.money < 200000 && tod <= 2) {
+    out.push({
+      id: 'pinjol', type: 'bad', title: 'Pinjam Pinjol',
+      sub: 'instant cair, bunga gila', cost: 'jalan terakhir',
+      can: () => true,
+      run() {
+        const amt = chance(0.5) ? 1000000 : 500000;
+        const bungaPick = chance(0.5) ? 0.35 : 0.18;
+        const src = bungaPick > 0.25 ? pick(['Pinjol ilegal "AyoCair"','Pinjol ilegal "DanaKilat"','DC ilegal "BoosterDana"']) : 'Pinjol legal OJK';
+        openModal({
+          title: 'Pinjam ' + rupiah(amt) + '?',
+          sub: src + ' • bunga ' + (bungaPick * 100).toFixed(0) + '%/bulan',
+          choices: [
+            { label: 'Cairkan sekarang', hint: 'dapat ' + rupiah(amt) + ' instan', run: () => {
+              S.money += amt;
+              S.debts.push({ src, amount: Math.round(amt * (1 + bungaPick * 0.3)), bunga: bungaPick });
+              log(`Cair ${rupiah(amt)} dari ${src}. Hidup lo sekarang milik mereka.`, 'bad');
+              S.stats.stress += 8;
+              S.actionTaken = true;
+              advanceTime();
+            }}
+          ],
+          cancellable: true
+        });
+      }
+    });
+  }
+
+  // 11. Bayar tagihan
+  if (S.debts.length > 0 || S.pendingBills.kontrakan) {
+    out.push({
+      id: 'bayar', title: 'Bayar Tagihan',
+      sub: S.debts.length + ' hutang' + (S.pendingBills.kontrakan ? ' + kontrakan' : ''),
+      cost: '', can: () => true,
+      run() { doBayarTagihan(); }
+    });
+  }
+
+  // 12. Pindah kota
+  if (S.money >= 1500000 && S.day > 5 && tod <= 1) {
+    out.push({
+      id: 'pindah', title: 'Pindah Kota', sub: 'reset lingkungan', cost: 'Rp 1.5jt',
+      can: () => true,
+      run() { doPindahKota(); }
+    });
+  }
+
+  // 13. Kunjungi relasi (random pilih 1 relasi)
+  if (S.relations.length > 0 && tod >= 1 && tod <= 2 && S.stats.energi >= 10) {
+    const friends = S.relations.filter(x => x.type !== 'musuh');
+    if (friends.length > 0) {
+      const r = pick(friends);
+      out.push({
+        id: 'visit', type: 'good', title: 'Kunjungi ' + r.label,
+        sub: 'trust +, kadang drama',
+        cost: 'energi -8', can: () => true,
+        run() { doVisitRelation(r); }
+      });
+    }
+  }
+
+  // 14. Kerja bakti RT (weekend / hari ke-7)
+  if (S.day % 7 === 0 && tod <= 1) {
+    out.push({
+      id: 'rt', title: 'Kerja Bakti RT', sub: 'reputasi tetangga',
+      cost: 'energi -15', can: () => true,
+      run() {
+        S.stats.energi -= 15;
+        S.stats.stress = clamp(S.stats.stress - 2, 0, 100);
+        log('Kerja bakti RT. Ngobrol sama Pak RT 1 jam soal sound horeg tetangga.', '');
+        if (chance(0.3)) {
+          S.hidden.ordal += 2;
+          log('Pak RT inget muka lo. "Anak baik," katanya.', 'good');
+        }
+        S.actionTaken = true;
+        advanceTime();
+      }
+    });
+  }
+
+  // 15. Olahraga ringan (gratis, selalu bisa pagi)
+  if (tod === 0 && S.stats.energi >= 15) {
+    out.push({
+      id: 'olahraga', type: 'good', title: 'Olahraga',
+      sub: 'lari/push-up/stretching • gratis',
+      cost: 'energi -10',
+      can: () => true,
+      run() {
+        S.stats.energi = clamp(S.stats.energi - 10, 0, 100);
+        S.stats.stress = clamp(S.stats.stress - 12, 0, 100);
+        S.stats.health = clamp(S.stats.health + 5, 0, 100);
+        S.stats.happiness = clamp(S.stats.happiness + 6, 0, 100);
+        log(pick([
+          'Lari pagi 30 menit. Endorphin hits beda dari kafein.',
+          'Push-up 3 set sampe nyerah. Badan capek, pikiran jernih.',
+          'Stretching di lantai kamar. Tulang bunyi semua, normal.',
+          'Senam di taman. Ikutan sama ibu-ibu, gak ada yang protes.'
+        ]), 'good');
+        S.actionTaken = true;
+        advanceTime();
+      }
+    });
+  }
+
+  // 16. Dzikir / meditasi (gratis, malam atau pagi)
+  if (tod === 0 || tod === 3) {
+    out.push({
+      id: 'meditasi', type: 'good', title: 'Dzikir / Meditasi',
+      sub: 'tenangkan pikiran • gratis',
+      cost: '',
+      can: () => true,
+      run() {
+        S.stats.stress = clamp(S.stats.stress - 10, 0, 100);
+        S.stats.happiness = clamp(S.stats.happiness + 5, 0, 100);
+        S.hidden.trauma = clamp(S.hidden.trauma - 2, 0, 100);
+        log(pick([
+          'Dzikir sebelum tidur. Pikiran lebih pelan dari biasanya.',
+          'Sholat tahajud + doa panjang. Ngerasa agak manusia lagi.',
+          'Meditasi 10 menit. Masalah sama, tapi kepala lebih dingin.',
+          'Baca Al-Quran sebentar. Tenang yang susah dijelasin.',
+          'Duduk diam di teras, ngelihat langit. Udah cukup itu.'
+        ]), 'good');
+        S.actionTaken = true;
+        advanceTime();
+      }
+    });
+  }
+
+  // 17. Resign tanpa kerjaan pengganti
+  if (S.job !== 'pengangguran' && tod <= 1) {
+    out.push({
+      id: 'resign', type: 'bad', title: 'Resign',
+      sub: 'keluar tanpa cadangan',
+      cost: 'gaji pro-rata cair',
+      can: () => true,
+      run() {
+        openModal({
+          title: 'Resign?',
+          sub: 'Keluar tanpa kerjaan pengganti.',
+          body: `Gaji pro-rata hari kerja sejak gajian terakhir akan cair. Setelah ini lo jadi pengangguran — cari kerja baru sendiri.`,
+          choices: [
+            { label: 'Ya, resign sekarang', hint: 'jadi pengangguran, gaji pro-rata cair', run: () => {
+              const oldJob = PEKERJAAN.find(j => j.id === S.job);
+              payFinalSalary(oldJob, 'resign');
+              log(`Lo resign dari ${oldJob?.nama || 'kerjaan'}. Tanpa pekerjaan pengganti. Leganya 10 menit.`, 'bad');
+              S.stats.stress = clamp(S.stats.stress - 5, 0, 100);
+              S.stats.happiness = clamp(S.stats.happiness - 8, 0, 100);
+              S.job = 'pengangguran'; S.jobStreak = 0;
+              S.payday = 0; S.lastPaidDay = 0; S.salaryMult = 1;
+              addMission('cariKerja');
+              S.actionTaken = true;
+              advanceTime();
+            }}
+          ],
+          cancellable: true
+        });
+      }
+    });
+  }
+
+  // ---- end generateAvailableActions ----
+  return out;
+}
+
+// ============ FINAL SALARY HELPER ============
+// Hitung dan bayar gaji terakhir saat keluar kerja.
+// mode: 'resign' (pindah kerja / berhenti, pro-rata hari kerja) | 'phk' (pesangon: full / setengah / nihil)
+function payFinalSalary(p, mode) {
+  if (!p || p.id === 'pengangguran' || p.harian || p.viral) return;
+  // harian: gaji dibayar tiap kerja, tidak ada gaji tertunda.
+  // viral: penghasilan dari konten saat itu juga.
+  const mult = S.salaryMult || 1;
+  // gaji bulanan acuan: kalau pernah gajian, pake nilai terakhir; kalau belum, hitung dari range.
+  const fullGaji = S.lastSalary > 0
+    ? S.lastSalary
+    : Math.round(((p.gaji[0] + p.gaji[1]) / 2) * mult);
+
+  if (mode === 'resign') {
+    // Pro-rata: hitung berapa hari sejak gajian terakhir / mulai kerja (absolut).
+    // Cap di 30 hari supaya nggak overshoot kalau player keluar persis di hari gajian.
+    const hariKerja = Math.max(0, Math.min(30, S.day - (S.lastPaidDay || S.day)));
+    const proRata = Math.max(0, Math.round(fullGaji * hariKerja / 30));
+    if (proRata > 0) {
+      S.money += proRata;
+      log(`Gaji pro-rata ${hariKerja} hari kerja cair: ${rupiah(proRata)}.`, 'good');
+      showToast('GAJI PRO-RATA', rupiah(proRata));
+    } else {
+      log('Baru mulai kerja, belum sempat gajian. Cuma kasih CV.', '');
+    }
+  } else if (mode === 'phk') {
+    // Pesangon: luck & jobStreak menentukan seberapa banyak.
+    const luckFactor = (S.hidden.luck || 50) / 100;
+    const streakBonus = Math.min((S.jobStreak || 0) / 200, 0.3); // max +30% kalau lama kerja
+    const roll = Math.random();
+    let pesangon = 0;
+    let keterangan = '';
+    if (roll < 0.15 + luckFactor * 0.1) {
+      // Pesangon penuh: 1 bulan gaji + bonus streak.
+      pesangon = Math.round(fullGaji * (1 + streakBonus));
+      keterangan = 'pesangon penuh';
+    } else if (roll < 0.55 + luckFactor * 0.15) {
+      // Setengah bulan
+      pesangon = Math.round(fullGaji * 0.5);
+      keterangan = 'pesangon setengah bulan';
+    } else {
+      // Nihil — PHK langsung tanpa pesangon
+      pesangon = 0;
+      keterangan = 'tanpa pesangon';
+    }
+    if (pesangon > 0) {
+      S.money += pesangon;
+      log(`PHK: ${keterangan} ${rupiah(pesangon)} cair.`, 'good');
+      showToast('PESANGON', rupiah(pesangon));
+    } else {
+      log(`PHK: ${keterangan}. Langsung beres-beres meja.`, 'bad');
+    }
+  }
+  // Reset tracking — yang udah keluar dari kerjaan ini
+  S.lastSalary = 0;
+  S.lastPaidDay = 0;
+  S.salaryMult = 1;
+}
+
+function doWork(p) {
+  const luckBonus = S.hidden.luck / 200;
+  const performance = clamp(0.4 + (S.skills['kerja keras'] || 30) / 200 + luckBonus + rand(-0.15, 0.15), 0, 1);
+  S.stats.energi = clamp(S.stats.energi + p.energi, 0, 100);
+  // stress dari kerja dikurangi 30% — burnout tetap ada tapi lebih realistis
+  S.stats.stress = clamp(S.stats.stress + Math.round(p.stress * 0.7), 0, 100);
+
+  if (p.harian) {
+    const gaji = Math.round(rand(p.gaji[0], p.gaji[1]) * performance);
+    S.money += gaji;
+    log(`Kerja ${p.nama}. Dapat ${rupiah(gaji)}.`, 'good');
+  } else if (p.viral) {
+    if (chance(0.3 + S.skills['public speaking'] / 300)) {
+      const dapet = Math.round(rand(p.gaji[0], p.gaji[1]) * (0.3 + performance) * 0.2);
+      if (dapet > 0) {
+        S.money += dapet;
+        S.viralCounter++;
+        log(`Konten lo dapat traction. Adsense + endorse ${rupiah(dapet)}.`, 'good');
+      } else {
+        log('Bikin konten, engagement 12. Algoritma kayak mantan: ghosting.', 'bad');
+      }
+    } else {
+      log('Bikin konten, edit 4 jam, posting, like 8.', 'bad');
+      S.stats.happiness = clamp(S.stats.happiness - 4, 0, 100);
+    }
+  } else {
+    log(`Kerja ${p.nama}. Hari biasa: meeting yang harusnya email.`, '');
+    S.jobStreak++;
+    if (S.jobStreak > 0 && S.jobStreak % 20 === 0) {
+      if (performance > 0.7 && chance(0.4)) {
+        // Naik gaji per-player, JANGAN mutate PEKERJAAN global (bug lama: bocor antar game/karakter).
+        S.salaryMult = (S.salaryMult || 1) * 1.1;
+        log('Bos acknowledge kerjaan lo. Gaji naik 10% bulan depan.', 'good');
+      } else if (performance < 0.4 && chance(0.3)) {
+        log('Bos negur di forum. Rekan kerja diam-diam nyengir.', 'bad');
+        S.stats.stress += 12;
+        if (chance(0.15)) {
+          log('Lo di-PHK. Pengangguran lagi.', 'bad');
+          const oldJob = PEKERJAAN.find(j => j.id === S.job);
+          payFinalSalary(oldJob, 'phk');
+          S.job = 'pengangguran'; S.jobStreak = 0;
+          addMission('cariKerja');
+        }
+      }
+    }
+  }
+  if (p.moral) S.hidden.trauma = clamp(S.hidden.trauma - p.moral, 0, 100);
+  if (p.danger && chance(0.06)) {
+    log('Hampir kecelakaan kerja. Helm aja masih utang ke koperasi.', 'bad');
+    S.stats.health -= 8; S.stats.stress += 12;
+  }
+  S.skills['kerja keras'] = clamp((S.skills['kerja keras'] || 30) + 0.7, 0, 100);
+  S.actionTaken = true;
+  advanceTime();
+}
+
+function doApplyJob() {
+  S.stats.energi -= 10;
+  S.lastJobApplyDay = S.day;
+  const peluangBase = { tinggi: 0.45, sedang: 0.30, rendah: 0.18 }[S.lokasi.peluang];
+  const peluang = peluangBase + S.hidden.ordal / 200;
+
+  let pool = PEKERJAAN.filter(p => p.id !== 'pengangguran' && p.id !== S.job);
+  if (S.lokasi.neighId === 'area-tambang') pool = pool.filter(p => p.id === 'tambang' || p.tier <= 2);
+  if (S.lokasi.neighId === 'kampung-nelayan' || S.lokasi.neighId === 'desa-sawit') pool = pool.filter(p => p.tier <= 2);
+  if (S.lokasi.neighId === 'scbd' || S.lokasi.neighId === 'kemang' || S.lokasi.neighId === 'pik') pool = pool.filter(p => p.tier >= 3);
+  if (S.lokasi.kota === 'Bali Wisata' && chance(0.4)) pool.unshift(PEKERJAAN.find(p => p.id === 'cafe-bali'));
+
+  const tawaran = pick(pool);
+
+  if (chance(peluang)) {
+    // Komunikasi siklus gaji jelas di body modal supaya player paham kapan duitnya turun
+    const cycleInfo = tawaran.harian
+      ? 'Bayaran cair tiap selesai kerja (harian).'
+      : tawaran.viral
+      ? 'Penghasilan tiap upload konten, gak ada gaji tetap.'
+      : 'Gajian bulanan (~30 hari sekali).';
+    openModal({
+      title: 'DITERIMA!', sub: 'Posisi: ' + tawaran.nama,
+      body: `Gaji: ${rupiah(tawaran.gaji[0])}–${rupiah(tawaran.gaji[1])}${tawaran.harian ? '/hari' : '/bulan'}. Stress ~${tawaran.stress}. Energi -${Math.abs(tawaran.energi)}.<br><br><strong>${cycleInfo}</strong>`,
+      choices: [
+        { label: 'Terima', run: () => {
+          // Kalau masih kerja, bayar gaji pro-rata hari kerja sebelum pindah
+          if (S.job !== 'pengangguran') {
+            const oldJob = PEKERJAAN.find(j => j.id === S.job);
+            payFinalSalary(oldJob, 'resign');
+          }
+          S.job = tawaran.id; S.jobStreak = 0;
+          // Reset multiplier gaji (mulai dari kerjaan baru = 100%)
+          S.salaryMult = 1;
+          S.lastSalary = 0;
+          if (tawaran.harian || tawaran.viral) {
+            // Job harian / viral: bayaran per aksi kerja, gak ada payday cycle
+            S.lastPaidDay = S.day;
+            S.payday = 0;
+            log(`Lo sekarang ${tawaran.nama}. ${cycleInfo}`, 'good');
+          } else {
+            // Gajian pertama 10–16 hari setelah mulai kerja (absolut, bukan modulo)
+            const daysToFirst = irand(10, 16);
+            S.payday = S.day + daysToFirst;
+            S.lastPaidDay = S.day; // anchor pro-rata dari hari mulai
+            log(`Lo sekarang ${tawaran.nama}. Gajian pertama ~${daysToFirst} hari lagi (hari ke-${S.payday}).`, 'good');
+            showToast('KERJA BARU', `Gajian pertama ${daysToFirst} hari lagi`);
+          }
+          markMissionDone('cariKerja');
+          S.actionTaken = true;
+          advanceTime();
+        }},
+        { label: 'Tolak (gengsi)', run: () => {
+          log(`Tolak ${tawaran.nama}. Ego full, dompet kosong.`, '');
+          S.stats.happiness += 2;
+          S.actionTaken = true;
+          advanceTime();
+        }}
+      ],
+      cancellable: false
+    });
+  } else {
+    log('Lamar kerja: ditolak. Alasan: ' + pick([
+      'HR ghosting setelah interview',
+      'kalah sama anak ordal kepala bagian',
+      '"butuh fresh graduate dengan pengalaman 5 tahun"',
+      'gaji ditawar ke setengah, lo nolak',
+      'tes psikotes pakai bahasa asing',
+      'WhatsApp HR "kami akan menghubungi" — sampe sekarang',
+      'kalah cepet sama 437 pelamar lain'
+    ]) + '.', 'bad');
+    S.stats.stress += 5;
+    S.stats.happiness -= 3;
+    S.actionTaken = true;
+    advanceTime();
+  }
+}
+
+function doHustle(h) {
+  S.stats.energi = clamp(S.stats.energi - h.energy, 0, 100);
+  if (h.modal) S.money -= h.modal;
+  const skillBonus = h.skill ? (S.skills[h.skill] || 0) / 200 : 0;
+  const luckBonus = S.hidden.luck / 300;
+  const actualRisk = clamp(h.risk - skillBonus - luckBonus, 0.05, 0.95);
+  if (chance(actualRisk)) {
+    log(`Hustle "${h.label}": zonk. ${h.modal ? 'Modal nyangkut, ' : ''}mental tested.`, 'bad');
+    S.stats.stress = clamp(S.stats.stress + 6, 0, 100);
+    if (h.moral) S.hidden.trauma += Math.abs(h.moral);
+  } else {
+    const profit = irand(Math.max(0, h.min), h.max);
+    S.money += profit;
+    log(`Hustle "${h.label}": profit ${rupiah(profit)}.`, 'good');
+    if (h.skill) S.skills[h.skill] = clamp((S.skills[h.skill] || 0) + 1, 0, 100);
+  }
+  markMissionDone('nyobaHustle');
+  S.actionTaken = true;
+  advanceTime();
+}
+
+function doNongkrong(harga) {
+  if (S.money < harga) harga = Math.min(S.money, 25000);
+  S.money -= harga;
+  S.stats.happiness = clamp(S.stats.happiness + 12, 0, 100);
+  S.stats.stress = clamp(S.stats.stress - 14, 0, 100);
+  S.stats.hygiene = clamp(S.stats.hygiene - 3, 0, 100);
+  S.hidden.loneliness = clamp(S.hidden.loneliness - 5, 0, 100);
+  const friends = S.relations.filter(x => x.type !== 'musuh');
+  if (friends.length > 0) {
+    const r = pick(friends);
+    r.trust = clamp(r.trust + irand(2, 8), 0, 100);
+    log(`Nongkrong sama ${r.label}. Ngobrol receh, tapi enak.`, 'good');
+  } else log('Nongkrong sendiri di cafe. Doomscroll juga sih intinya.', '');
+  if (chance(0.2) && S.relations.length < 12) {
+    const newRel = pick(RELASI_TEMPLATE.filter(t => !S.relations.find(r => r.label === t.label)));
+    if (newRel) {
+      S.relations.push({ label: newRel.label, type: newRel.type, trust: irand(20, 50), debt: 0 });
+      log(`Kenalan baru: ${newRel.label}.`, 'good');
+    }
+  }
+  S.actionTaken = true;
+  advanceTime();
+}
+
+function doHealing(h) {
+  if (S.money < h.harga) return;
+  S.money -= h.harga;
+  S.stats.stress = clamp(S.stats.stress - h.stress, 0, 100);
+  S.stats.happiness = clamp(S.stats.happiness + h.happy, 0, 100);
+  if (h.trauma) S.hidden.trauma = clamp(S.hidden.trauma + h.trauma, 0, 100);
+  log(`Healing: ${h.label}. Bahagia sementara, tagihan menetap.`, 'good');
+  S.actionTaken = true;
+  if (h.dur) {
+    for (let i = 0; i < h.dur && S && !S.dead; i++) {
+      S.timeOfDay = 3;
+      advanceTime(true);
+    }
+  } else advanceTime();
+}
+
+function doGodaan(g) {
+  if (g.id === 'judol') doJudol(50000);
+  else if (g.id === 'judol-besar') doJudol(200000);
+  else if (g.id === 'doomscroll') {
+    S.stats.energi = clamp(S.stats.energi - 25, 0, 100);
+    S.stats.stress = chance(0.5) ? clamp(S.stats.stress - 4, 0, 100) : clamp(S.stats.stress + 8, 0, 100);
+    S.addictions['Doomscroll'] = (S.addictions['Doomscroll'] || 0) + 1;
+    log('Doomscroll FYP. Algoritma kasih politik, kucing, drama mantan idol. Otak puyeng.', 'bad');
+  } else if (g.id === 'shopee') {
+    if (S.money < 250000) { log('Saldo kurang. Untung selamat.', ''); S.actionTaken = true; advanceTime(); return; }
+    S.money -= 250000;
+    S.stats.happiness = clamp(S.stats.happiness + 10, 0, 100);
+    S.stats.stress = clamp(S.stats.stress - 3, 0, 100);
+    S.addictions['Shopping'] = (S.addictions['Shopping'] || 0) + 1;
+    log('Checkout 7 item. Yang berguna 1. Yang nyangkut 6.', 'bad');
+  } else if (g.id === 'vape') {
+    if (S.money < 180000) { log('Saldo nggak cukup buat pod baru.', ''); S.actionTaken = true; advanceTime(); return; }
+    S.money -= 180000;
+    S.addictions['Vape'] = (S.addictions['Vape'] || 0) + 1;
+    S.stats.health -= 3; S.stats.stress = clamp(S.stats.stress - 5, 0, 100);
+    log('Coil baru, juice mint, hisap di parkiran kantor.', '');
+  } else if (g.id === 'rokok') {
+    if (S.money < 30000) { log('Saldo nggak cukup sebungkus.', ''); S.actionTaken = true; advanceTime(); return; }
+    S.money -= 30000;
+    S.addictions['Rokok'] = (S.addictions['Rokok'] || 0) + 1;
+    S.stats.health -= 4; S.stats.stress = clamp(S.stats.stress - 6, 0, 100);
+    log('Sebatang dulu. Lo bilang gitu sejak 3 tahun lalu.', '');
+  } else if (g.id === 'gacha') {
+    const amt = irand(100000, 400000);
+    if (S.money < amt) { log('Mau top up, saldo kurang. Untung.', ''); S.actionTaken = true; advanceTime(); return; }
+    S.money -= amt;
+    S.addictions['Gacha'] = (S.addictions['Gacha'] || 0) + 1;
+    if (chance(0.1)) {
+      log(`Top up ${rupiah(amt)}. JACKPOT SSR! Dopamine 12 jam.`, 'event');
+      S.stats.happiness += 15;
+    } else {
+      log(`Top up ${rupiah(amt)}. Pity belum cukup. Lagi.`, 'bad');
+      S.stats.stress += 4;
+    }
+  }
+  S.actionTaken = true;
+  advanceTime();
+}
+
+function doJudol(bet) {
+  if (S.money < bet) { log('Mau judol, saldo nggak cukup. Untung.', ''); return; }
+  S.money -= bet;
+  S.addictions['Judol'] = (S.addictions['Judol'] || 0) + 1;
+  if (chance(0.07)) {
+    const win = bet * irand(8, 25);
+    S.money += win;
+    log(`JACKPOT! Menang ${rupiah(win)}. Otak: "ini skill bukan luck".`, 'event');
+    S.stats.happiness += 15;
+    if (chance(0.7)) {
+      log('Spin lagi sekali. Pasti hoki.', '');
+      setTimeout(() => { doJudol(bet); render(); }, 300);
+    }
+  } else {
+    log(`Kalah ${rupiah(bet)}. Spin lagi. Spin terus.`, 'bad');
+    S.stats.stress = clamp(S.stats.stress + 6, 0, 100);
+    S.hidden.trauma += 1;
+    if ((S.addictions['Judol'] || 0) > 5 && chance(0.3)) {
+      log('Lo sadar lagi tenggelam. Tapi besok pasti hoki, kan?', 'bad');
+    }
+  }
+}
+
+function doBayarTagihan() {
+  const choices = [];
+  if (S.pendingBills.kontrakan) {
+    choices.push({
+      label: `Bayar kontrakan ${rupiah(S.bills.kontrakan)}`,
+      hint: 'jatuh tempo!',
+      disabled: S.money < S.bills.kontrakan,
+      run: () => {
+        S.money -= S.bills.kontrakan;
+        S.pendingBills.kontrakan = false;
+        S.bills.kontrakanOverdueSince = null;
+        log('Kontrakan lunas. Ibu kos sekarang baik 3 hari ke depan.', 'good');
+        S.stats.stress = clamp(S.stats.stress - 5, 0, 100);
+        S.actionTaken = true; advanceTime();
+      }
+    });
+  }
+  S.debts.forEach((d, idx) => {
+    choices.push({
+      label: `Lunasi ${d.src} — ${rupiah(d.amount)}`,
+      hint: `bunga ${(d.bunga * 100).toFixed(0)}%/bulan`,
+      disabled: S.money < d.amount,
+      run: () => {
+        S.money -= d.amount;
+        S.debts.splice(idx, 1);
+        log(`LUNAS ${d.src}. Lega seperti baru selesai BAB.`, 'good');
+        S.stats.stress = clamp(S.stats.stress - 15, 0, 100);
+        S.stats.happiness = clamp(S.stats.happiness + 8, 0, 100);
+        S.actionTaken = true; advanceTime();
+      }
+    });
+    const cicil = Math.min(S.money, Math.round(d.amount * 0.3));
+    if (cicil >= 50000) {
+      choices.push({
+        label: `Cicil ${rupiah(cicil)} ke ${d.src}`,
+        hint: 'bunga tetap jalan',
+        run: () => {
+          S.money -= cicil;
+          d.amount -= cicil;
+          log(`Cicil ${rupiah(cicil)} ke ${d.src}.`, '');
+          S.stats.stress = clamp(S.stats.stress - 2, 0, 100);
+          S.actionTaken = true; advanceTime();
+        }
+      });
+    }
+  });
+  openModal({ title: 'Bayar apa?', sub: 'Hidup adalah utang.', choices, cancellable: true });
+}
+
+function doPindahKota() {
+  const candidates = [];
+  for (let i = 0; i < 4; i++) {
+    const pulauName = pick(Object.keys(PULAU));
+    candidates.push({ pulauName, kota: pick(PULAU[pulauName]), neigh: pick(NEIGHBORHOOD_ARCH) });
+  }
+  openModal({
+    title: 'Pindah ke mana?', sub: 'Biaya pindah Rp 1.5jt. Kerjaan ilang — gaji terakhir pro-rata cair.',
+    choices: candidates.map(c => ({
+      label: `${c.kota} / ${c.neigh.label}`,
+      hint: `${c.pulauName} • ${c.neigh.class.toUpperCase()} • biaya hidup ${Math.round(c.neigh.biaya * 100)}% • peluang ${c.neigh.peluang}`,
+      run: () => {
+        S.money -= 1500000;
+        // Bayar gaji terakhir (pro-rata) sebelum kehilangan kerjaan karena pindah kota
+        if (S.job !== 'pengangguran') {
+          const oldJob = PEKERJAAN.find(j => j.id === S.job);
+          payFinalSalary(oldJob, 'resign');
+        }
+        S.lokasi = {
+          pulau: c.pulauName, kota: c.kota, neigh: c.neigh.label, neighId: c.neigh.id,
+          class: c.neigh.class, biaya: c.neigh.biaya, peluang: c.neigh.peluang, vibe: c.neigh.vibe
+        };
+        S.job = 'pengangguran'; S.jobStreak = 0;
+        S.bills.kontrakan = Math.round(c.neigh.biaya * 700000);
+        S.pendingBills.kontrakan = false;
+        S.bills.kontrakanOverdueSince = null;
+        log(`Pindah ke ${c.kota} / ${c.neigh.label}. Hidup baru. Stress lama bawa.`, 'event');
+        S.stats.stress = clamp(S.stats.stress - 8, 0, 100);
+        addMission('cariKerja');
+        S.actionTaken = true;
+        advanceTime();
+      }
+    })),
+    cancellable: true
+  });
+}
+
+function doVisitRelation(r) {
+  S.stats.energi -= 8;
+  r.lastInteract = S.day;
+  // Stress reduction scale by relation type: teman & romantis lebih besar karena seru
+  const stressRelief = (r.type === 'romantis' || r.type === 'teman') ? 12 : 7;
+  weightedPick([
+    { w: 3, run: () => {
+      r.trust = clamp(r.trust + irand(5, 12), 0, 100);
+      S.stats.happiness = clamp(S.stats.happiness + 8, 0, 100);
+      S.stats.stress = clamp(S.stats.stress - stressRelief, 0, 100);
+      S.hidden.loneliness = clamp(S.hidden.loneliness - 6, 0, 100);
+      log(`Kunjungi ${r.label}. Ngobrol soal hidup. Hangat.`, 'good');
+    }},
+    { w: 2, run: () => {
+      log(`${r.label} curhat 2 jam soal mantan / pekerjaan.`, '');
+      // Dengerin curhat teman tetap ada nilai, tapi sedikit drain
+      S.stats.stress = clamp(S.stats.stress + 3, 0, 100);
+      S.hidden.loneliness = clamp(S.hidden.loneliness - 4, 0, 100);
+      r.trust = clamp(r.trust + 5, 0, 100);
+    }},
+    { w: 1, run: () => {
+      if (S.money >= 100000) {
+        log(`${r.label} pinjem uang Rp 100rb. "Bulan depan balikin pasti".`, 'event');
+        S.money -= 100000; r.debt += 100000;
+        r.trust = clamp(r.trust + 3, 0, 100);
+      } else {
+        log(`${r.label} pinjem uang tapi lo cekak. Awkward.`, '');
+        r.trust = clamp(r.trust - 3, 0, 100);
+      }
+    }},
+    { w: 1, run: () => {
+      if (r.type === 'romantis') {
+        if (chance(0.4)) {
+          r.trust = clamp(r.trust - 10, 0, 100);
+          log(`${r.label} ngambek. Drama 2 hari ke depan.`, 'bad');
+          S.stats.stress = clamp(S.stats.stress + 10, 0, 100);
+        } else {
+          r.trust = clamp(r.trust + 10, 0, 100);
+          log(`${r.label} kasih kejutan kecil. Hangat di tengah chaos.`, 'good');
+          S.stats.happiness = clamp(S.stats.happiness + 12, 0, 100);
+          S.stats.stress = clamp(S.stats.stress - 15, 0, 100);
+        }
+      } else {
+        log(`Ketemuan biasa sama ${r.label}.`, '');
+        S.stats.stress = clamp(S.stats.stress - 4, 0, 100);
+        r.trust = clamp(r.trust + 3, 0, 100);
+      }
+    }}
+  ]).run();
+  S.actionTaken = true;
+  advanceTime();
+}
+
+// ============ RANDOM EVENT ============
+function randomEvent() {
+  weightedPick([
+    { w: 1, run: () => { const a = irand(20000, 150000); S.money += a; log(`Nemu uang ${rupiah(a)} di celana lama. Rezeki anak sholeh.`, 'good'); }},
+    { w: 1, run: () => { log('Tetangga ngirim makanan hasil hajatan.', 'good'); S.stats.lapar = clamp(S.stats.lapar + 30, 0, 100); }},
+    { w: 1, run: () => { log('Bonus tak terduga dari bos: amplop "kenangan".', 'good'); S.money += irand(100000, 500000); }},
+    { w: 2, run: () => { const a = irand(50000, 250000); S.money -= a; log(`Motor rusak. Servis ${rupiah(a)}.`, 'bad'); }},
+    { w: 2, run: () => { log('Kecopetan di angkot. Dompet, eKTP, semuanya raib.', 'bad'); S.money = Math.max(0, S.money - irand(50000, 400000)); S.stats.stress += 10; }},
+    { w: 2, run: () => { log('Atap kontrakan bocor. Air merembes ke laptop.', 'bad'); S.money -= 200000; S.stats.happiness -= 8; }},
+    { w: 2, run: () => { log('Sakit ringan. Beli obat di apotek.', 'bad'); S.money -= 35000; S.stats.health -= 5; }},
+    { w: 1, run: () => { log('Bocil tetangga buka sound horeg jam 2 siang. Karaoke "Bunga".', 'event'); S.stats.stress += 8; }},
+    { w: 1, run: () => { log('Lo ditawarin MLM sama temen lama. 2 jam nyerocos.', 'event'); S.stats.stress += 5; }},
+    { w: 1, run: () => {
+      log('Diajak hajatan tetangga. Wajib amplop Rp 50rb.', 'event');
+      if (S.money >= 50000) { S.money -= 50000; S.stats.happiness += 4; }
+      else { log('Lo ngumpet di kamar pura-pura nggak ada.', 'bad'); S.stats.happiness -= 5; }
+    }},
+    { w: 1, run: () => { log('Listrik se-RT mati 3 jam karena kabel kebakar.', 'event'); S.stats.stress += 4; }},
+    { w: 1, run: () => {
+      const r = pick(S.relations);
+      if (!r) return;
+      const drama = pick([' pinjem uang Rp 200rb.',' curhat 2 jam soal mantan baru.',' ngajak kondangan minggu depan.',' jualan asuransi.',' ngamuk via WA gak jelas.']);
+      log(r.label + drama, 'event');
+      if (drama.includes('kondangan') && S.money >= 100000) {
+        log('Beli amplop Rp 100rb.', '');
+        S.money -= 100000;
+      }
+    }},
+    { w: 1, run: () => {
+      const pacar = S.relations.find(r => r.type === 'romantis');
+      if (pacar) {
+        if (chance(0.5)) {
+          pacar.trust = clamp(pacar.trust - 15, 0, 100);
+          log(`${pacar.label} ngambek karena "kurang perhatian". Drama 3 hari.`, 'bad');
+          S.stats.stress += 10;
+        } else {
+          pacar.trust = clamp(pacar.trust + 10, 0, 100);
+          log(`${pacar.label} kasih kejutan kecil. Rasanya hangat di tengah chaos.`, 'good');
+          S.stats.happiness += 8;
+        }
+      }
+    }},
+    { w: 0.5, run: () => {
+      if (S.viralCounter > 2 && chance(0.4)) {
+        log('Konten lama lo dibongkar haters. Cancel attempt. Mental kena.', 'bad');
+        S.stats.stress += 15;
+      } else if (chance(0.2)) {
+        const hits = irand(50000, 500000);
+        S.money += hits;
+        S.viralCounter++;
+        log(`Video lo viral. Adsense + endorse ${rupiah(hits)}.`, 'good');
+      }
+    }},
+    { w: 1, run: () => { log('Pak RT door-to-door minta sumbangan 17 Agustus.', 'event'); if (S.money >= 25000) S.money -= 25000; }},
+    { w: 1, run: () => {
+      // family burden event - sandwich generation
+      if (S.hidden.family_burden > 30) {
+        const amt = irand(150000, 700000);
+        if (chance(S.hidden.family_burden / 150)) {
+          log(`WA dari rumah: "tolong transferin ${rupiah(amt)} ya nak, urgent."`, 'event');
+          if (S.money >= amt && chance(0.7)) {
+            S.money -= amt;
+            log(`Lo transfer ${rupiah(amt)}. Anak baik. Saldo tipis.`, '');
+            S.stats.stress += 5;
+          } else {
+            log(`Lo nggak bales WA. Guilt naik.`, 'bad');
+            S.stats.stress += 8;
+            S.hidden.trauma = clamp(S.hidden.trauma + 2, 0, 100);
+          }
+        }
+      }
+    }},
+    { w: 0.5, run: () => {
+      if (chance(S.skills['public speaking'] / 300)) {
+        S.viralCounter++;
+        log('Postingan lo viral di X. 10k retweet. Notifikasi gak berhenti.', 'event');
+        S.stats.stress += 6;
+      }
+    }}
+  ]).run();
+}
+
+// ============ VITALS / DEATH ============
+function checkVitals() {
+  // Grace period: stat must stay at critical level for 2 consecutive ticks before death
+  // Health
+  if (S.stats.health <= 0) {
+    S.flags.healthCrit = (S.flags.healthCrit || 0) + 1;
+    if (S.flags.healthCrit >= 2) return die('Kesehatan habis. Kena gula, jantung, asam urat sekaligus karena indomie 12 tahun.');
+    log('⚠ Tubuh lo nyaris kolaps. Istirahat dan makan sekarang!', 'bad');
+    return;
+  } else { S.flags.healthCrit = 0; }
+
+  // Stress
+  if (S.stats.stress >= 100) {
+    S.flags.stressCrit = (S.flags.stressCrit || 0) + 1;
+    if (S.flags.stressCrit >= 2) return die(`Burnout total. Mental collapse di hari ke-${S.day}.`);
+    log('⚠ Mental lo di ujung. Butuh healing sekarang, bukan besok.', 'bad');
+    return;
+  } else { S.flags.stressCrit = 0; }
+
+  // Lapar
+  if (S.stats.lapar <= 0) {
+    S.flags.laparCrit = (S.flags.laparCrit || 0) + 1;
+    if (S.flags.laparCrit >= 2) return die('Mati kelaparan. Indonesia, 2026.');
+    log('⚠ Lo belum makan sama sekali. Perut kosong, kepala pusing.', 'bad');
+    return;
+  } else { S.flags.laparCrit = 0; }
+
+  // Happiness
+  if (S.stats.happiness <= 0 && chance(0.08)) return die('Hilang harapan. Hidup terlalu berat ditanggung sendiri.');
+}
+
+function die(reason) {
+  S.dead = true;
+  S.causeOfDeath = reason;
+  showGameOver();
+}
+
+// ============ RENDER ============
+function render() {
+  if (!S) return;
+  $('t-date').textContent = `Hari ${S.day} / ${['Pagi','Siang','Sore','Malam'][S.timeOfDay]}`;
+  const moneyEl = $('t-money');
+  moneyEl.textContent = rupiah(S.money);
+  moneyEl.className = 'value money' + (S.money < 30000 ? ' broke' : S.money < 200000 ? ' poor' : '');
+  $('t-debt').textContent = rupiah(S.debts.reduce((s, d) => s + d.amount, 0));
+  const stressEl = $('t-stress');
+  stressEl.textContent = Math.round(S.stats.stress);
+  stressEl.className = 'value stress' + (S.stats.stress > 80 ? ' crit' : S.stats.stress > 60 ? ' high' : '');
+  $('t-loc').textContent = S.lokasi.kota;
+
+  $('char-name').textContent = S.char.name;
+  $('char-meta').textContent = `${Math.floor(S.char.umur)} thn • ${S.char.gender} • ${PEKERJAAN.find(p => p.id === S.job)?.nama || '—'}${S.generation > 1 ? ' • Gen ' + S.generation : ''}`;
+  $('char-bg').innerHTML = `${S.char.bgLabel} • hobi ${S.char.hobi}<br><span style="font-size:9px;opacity:0.7">"${S.char.bgQuote || ''}"</span>${S.char.ancestor ? '<br><span style="font-size:9px;opacity:0.55">keturunan ' + S.char.ancestor + '</span>' : ''}`;
+  const cb = $('char-class');
+  cb.textContent = S.lokasi.class.replace('-', ' ').toUpperCase();
+  cb.className = 'class-badge ' + S.lokasi.class;
+
+  // Job info: kasih tau player jelas berapa hari lagi sampai gajian
+  const ji = $('job-info');
+  if (S.job !== 'pengangguran') {
+    const p = PEKERJAAN.find(x => x.id === S.job);
+    let cycleHtml = '';
+    if (p.harian) {
+      cycleHtml = `<div class="ji-payday">Bayaran cair tiap kerja (${rupiah(p.gaji[0])}–${rupiah(p.gaji[1])}/hari)</div>`;
+    } else if (p.viral) {
+      cycleHtml = `<div class="ji-payday">Penghasilan dari konten (variabel)</div>`;
+    } else {
+      const mult = S.salaryMult || 1;
+      const gMin = Math.round(p.gaji[0] * mult);
+      const gMax = Math.round(p.gaji[1] * mult);
+      // Sisa hari ke gajian berikutnya (S.payday adalah hari absolut)
+      let daysToPay;
+      if (S.payday > 0) {
+        daysToPay = Math.max(0, S.payday - S.day);
+      } else {
+        // job harian/viral: S.payday === 0, tidak tampilkan countdown
+        daysToPay = 99;
+      }
+      const payCls = daysToPay === 0 ? 'today' : daysToPay <= 3 ? 'soon' : '';
+      const payText = daysToPay === 0 ? 'HARI INI!' : daysToPay === 1 ? 'besok' : `${daysToPay} hari lagi`;
+      cycleHtml = `
+        <div style="margin-top:3px;color:var(--ink-soft);font-size:9px">${rupiah(gMin)}–${rupiah(gMax)}/bulan${mult > 1.01 ? ` <span style="color:var(--green)">(+${Math.round((mult-1)*100)}%)</span>` : ''}</div>
+        <div class="ji-payday ${payCls}">Gajian: ${payText}</div>`;
+    }
+    ji.style.display = 'block';
+    ji.innerHTML = `<span class="ji-label">Status Kerja</span><span class="ji-main">${p.nama}</span>${cycleHtml}`;
+  } else {
+    ji.style.display = 'block';
+    ji.innerHTML = `<span class="ji-label">Status Kerja</span><span class="ji-main" style="color:var(--red)">Pengangguran</span><div class="ji-payday" style="color:var(--ink-soft)">Lamar kerja buat dapat penghasilan</div>`;
+  }
+
+  ['energi','lapar','hygiene','health','stress','happiness'].forEach(k => {
+    const v = Math.round(S.stats[k]);
+    $('lbl-' + k).textContent = v;
+    const bar = $('bar-' + k);
+    bar.style.width = v + '%';
+    const isInverted = k === 'stress';
+    const isLow = isInverted ? v > 75 : v < 25;
+    bar.className = 'bar-fill ' + ({ energi: 'energy', lapar: 'lapar', hygiene: 'hygiene', health: 'health', stress: 'stress', happiness: 'happiness' }[k]) + (isLow ? ' warn' : '');
+  });
+
+  $('skills-list').innerHTML = Object.entries(S.skills).map(([k, v]) =>
+    `<div style="display:flex;justify-content:space-between"><span>${k}</span><span style="color:var(--ink-soft)">${Math.round(v)}</span></div>`
+  ).join('');
+  $('hidden-list').innerHTML = Object.entries(S.hidden).map(([k, v]) =>
+    `<div style="display:flex;justify-content:space-between"><span>${k.replace('_', ' ')}</span><span style="color:var(--ink-soft)">${Math.round(v)}</span></div>`
+  ).join('');
+
+  // Rebuild scene title robustly so we never lose the <small>
+  const sceneTitle = $('scene-title');
+  const timeLabels = ['Pagi','Siang','Sore','Malam'];
+  // find first text node and replace its content; clear any other text nodes
+  let textUpdated = false;
+  sceneTitle.childNodes.forEach(n => {
+    if (n.nodeType === Node.TEXT_NODE) {
+      if (!textUpdated) { n.textContent = timeLabels[S.timeOfDay] + ' '; textUpdated = true; }
+      else { n.textContent = ''; }
+    }
+  });
+  $('scene-sub').textContent = `${S.lokasi.neigh} — ${S.lokasi.vibe}`;
+  $('weather').textContent = S.weather.label;
+
+  $('news-feed').innerHTML = S.newsBuffer.slice(0, 6).map(n =>
+    `<div class="news-item ${n.cat}"><span class="cat">${n.cat}</span>${n.txt}</div>`
+  ).join('') || '<div style="font-size:10px;color:var(--ink-soft);font-style:italic">Belum ada drama hari ini...</div>';
+
+  $('relations-list').innerHTML = S.relations.map(r => `
+    <div class="rel">
+      <div><div class="name">${r.label}${r.debt > 0 ? ' <span style="color:var(--red);font-size:9px">[ngutang ' + rupiah(r.debt) + ']</span>' : ''}</div><div class="type">${r.type}</div></div>
+      <div class="rel-bar"><div class="${r.trust > 50 ? '' : 'bad'}" style="width:${r.trust}%"></div></div>
+    </div>`).join('');
+
+  const debtItems = [];
+  if (S.pendingBills.kontrakan) debtItems.push(`<div style="padding:4px 0;color:var(--red)"><strong>Kontrakan!</strong> ${rupiah(S.bills.kontrakan)} jatuh tempo</div>`);
+  S.debts.forEach(d => debtItems.push(`<div style="padding:4px 0;border-bottom:1px dashed rgba(0,0,0,0.1)">
+    <strong>${d.src}</strong><br>
+    <span style="color:var(--red)">${rupiah(d.amount)}</span> <span style="color:var(--ink-soft);font-size:9px">@ ${(d.bunga*100).toFixed(0)}%/bln</span>
+  </div>`));
+  $('debt-list').innerHTML = debtItems.length ? debtItems.join('') : '<div style="color:var(--green);font-size:10px">Bebas hutang. Untuk sekarang.</div>';
+
+  const topMission = S.missions.find(m => m.type === 'urgent') || S.missions.find(m => m.type === 'main') || S.missions[0];
+  if (topMission) {
+    $('mission-area').innerHTML = `
+      <div class="mission-banner ${topMission.type === 'urgent' ? 'urgent' : ''}">
+        <div class="mission-label">★ Misi: ${topMission.type.toUpperCase()}</div>
+        <div class="mission-title">${topMission.label}</div>
+        <div class="mission-desc">${topMission.desc}</div>
+        <div class="mission-progress">REWARD: <span class="reward">${topMission.rewardText}</span></div>
+      </div>`;
+  } else $('mission-area').innerHTML = '';
+
+  $('mission-list').innerHTML = S.missions.length ?
+    S.missions.map(m => `<div style="padding:5px 0;border-bottom:1px dashed rgba(0,0,0,0.1)">
+      <strong>${m.label}</strong> <span style="font-size:9px;color:var(--ink-soft);text-transform:uppercase">[${m.type}]</span><br>
+      <span style="font-size:10px;color:var(--ink-soft)">${m.desc}</span>
+    </div>`).join('') :
+    '<div style="font-size:10px;color:var(--ink-soft);font-style:italic">Tidak ada misi aktif.</div>';
+  $('mission-count').textContent = S.missions.length;
+
+  renderActions();
+  renderLog();
+  renderTicker();
+  $('action-hint').textContent = S.actionTaken ? 'pilih "lanjut →" ke blok berikutnya' : 'pilih 1 aksi';
+
+  // Autosave — render() runs after every meaningful state change,
+  // so this captures the whole gameplay loop without manual hooks.
+  scheduleAutoSave();
+}
+
+function renderActions() {
+  const wrap = $('actions');
+  const actions = generateAvailableActions();
+  const lanjut = actions.find(a => a.id === 'lanjut');
+  const others = actions.filter(a => a.id !== 'lanjut');
+  S._currentActions = {};
+  actions.forEach(a => S._currentActions[a.id] = a);
+  // when action already taken, only the time/advance button stays enabled
+  const lockedByAction = S.actionTaken;
+  wrap.innerHTML = [...others, lanjut].map(a => {
+    const cantNow = a.can && !a.can();
+    const isTime = !!a.isTime;
+    const lockedHere = lockedByAction && !isTime;
+    const disabled = cantNow || lockedHere;
+    return `
+    <button class="action-btn" data-id="${a.id}" data-type="${a.type || ''}" ${disabled ? 'disabled' : ''} ${lockedHere ? 'data-locked="1"' : ''}>
+      <span class="title">${a.title}</span>
+      <span class="sub">${a.sub || ''}</span>
+      <span class="cost">${a.cost || ''}</span>
+    </button>`;
+  }).join('');
+  wrap.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.disabled) {
+        if (btn.dataset.locked === '1') {
+          showToast('Sudah pilih aksi', 'klik "Lanjut →" untuk blok berikutnya');
+        }
+        return;
+      }
+      const id = btn.dataset.id;
+      const a = S._currentActions[id];
+      if (!a) return;
+      a.run();
+    });
+  });
+}
+
+function renderLog() {
+  $('log').innerHTML = S.logBuffer.slice().reverse().slice(0, 25).map(l =>
+    `<div class="log-entry ${l.type}"><span class="time">[H${l.day} ${l.time}]</span><span class="msg">${l.msg}</span></div>`
+  ).join('');
+}
+
+function renderTicker() {
+  const items = [
+    { txt: 'IHSG ' + (chance(0.5) ? '+' : '-') + (Math.random()*2).toFixed(2) + '%', cls: chance(0.5) ? 'up' : 'down' },
+    { txt: 'USD/IDR ' + irand(15800, 16400), cls: '' },
+    { txt: 'BBM Pertalite Rp ' + irand(10000, 12500), cls: '' },
+    { txt: 'Cabai merah Rp ' + irand(60000, 130000) + '/kg', cls: 'down' },
+    { txt: 'Beras Rp ' + irand(14000, 18000) + '/kg', cls: '' },
+    { txt: 'Trending: #' + pick(['kabinetbaru','viraltiktok','harganaikterus','blokirjudol','listrikbermasalah','korupsidinas']), cls: '' },
+    { txt: 'BI rate ' + (5 + Math.random()).toFixed(2) + '%', cls: '' },
+    { txt: 'Emas Rp ' + irand(1280000, 1380000) + '/gr', cls: 'up' }
+  ];
+  $('ticker').innerHTML = items.map(i => `<span class="ticker-item ${i.cls}">${i.txt}</span>`).join('');
+}
+
+// ============ MODAL ============
+function openModal({ title, sub, body, choices, cancellable }) {
+  modalOpen = true;
+  $('modal-content').innerHTML = `
+    <div class="modal-title">${title}</div>
+    ${sub ? `<div class="modal-sub">${sub}</div>` : ''}
+    ${body ? `<div class="modal-body">${body}</div>` : ''}
+    <div class="modal-choices">
+      ${choices.map((c, i) => `<button class="modal-choice" data-i="${i}" ${c.disabled ? 'disabled' : ''}>
+        <strong>${c.label}</strong>
+        ${c.hint ? `<span class="hint">${c.hint}</span>` : ''}
+      </button>`).join('')}
+      ${cancellable ? `<button class="modal-choice" data-i="-1" style="background:transparent;border:1px solid var(--ink-soft);color:var(--ink-soft)"><strong>← Batal</strong></button>` : ''}
+    </div>`;
+  $('modal').classList.add('show');
+  $('modal-content').querySelectorAll('.modal-choice').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.disabled) return;
+      const i = +b.dataset.i;
+      closeModal();
+      if (i >= 0 && choices[i]?.run) choices[i].run();
+      render();
+    });
+  });
+}
+
+function closeModal() {
+  $('modal').classList.remove('show');
+  modalOpen = false;
+}
+
+function showToast(title, sub = '') {
+  const t = $('toast');
+  t.innerHTML = title + (sub ? `<span class="sub">${sub}</span>` : '');
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ============ NAV ============
+document.querySelectorAll('.nav-btn[data-nav]').forEach(b => {
+  b.addEventListener('click', () => {
+    const target = b.dataset.nav;
+    if (target === 'main') {
+      closeAllPanels();
+      return;
+    }
+    // open requested panel, close other
+    const isOpen = $((target === 'left' ? 'leftPanel' : 'rightPanel')).classList.contains('open');
+    closeAllPanels();
+    if (!isOpen) {
+      if (target === 'left') $('leftPanel').classList.add('open');
+      if (target === 'right') $('rightPanel').classList.add('open');
+      document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      $('panel-backdrop').classList.add('show');
+    }
+  });
+});
+
+function closeAllPanels() {
+  $('leftPanel').classList.remove('open');
+  $('rightPanel').classList.remove('open');
+  $('panel-backdrop').classList.remove('show');
+  document.querySelectorAll('.nav-btn[data-nav]').forEach(x => x.classList.remove('active'));
+  const mainBtn = document.querySelector('.nav-btn[data-nav="main"]');
+  if (mainBtn) mainBtn.classList.add('active');
+}
+
+// keep legacy name working but route to closeAllPanels for safety
+function togglePanel(_id) { closeAllPanels(); }
+
+// ============ GAME OVER ============
+function showGameOver() {
+  const totalDebt = S.debts.reduce((s, d) => s + d.amount, 0);
+  const netWorth = S.money - totalDebt;
+  modalOpen = true;
+  // package inheritance for next gen
+  S._inheritance = {
+    fromName: S.char.name,
+    generation: (S.generation || 1) + 1,
+    trauma: clamp(Math.round(S.hidden.trauma * 0.5 + 10), 5, 80),
+    ordal: Math.round(S.hidden.ordal * 0.6),
+    luck: Math.round(S.hidden.luck * 0.5 + 25),
+    family_burden: clamp(Math.round(S.hidden.family_burden * 0.4 + (totalDebt > 0 ? 25 : 5)), 0, 90),
+    inheritedDebt: Math.round(totalDebt * 0.25),
+    inheritedMoney: Math.max(0, Math.round(netWorth * 0.3)),
+    inheritedReputation: S.viralCounter
+  };
+  $('modal-content').innerHTML = `
+    <div class="game-over">
+      <div class="modal-title" style="color:var(--red)">— HABIS —</div>
+      <div class="modal-sub">${S.char.name}, ${Math.floor(S.char.umur)} tahun. ${S.lokasi.kota}.</div>
+      <div class="obit">"${generateObituary()}"</div>
+      <div style="font-size:11px;color:var(--ink-soft);margin-bottom:10px"><strong>Sebab:</strong> ${S.causeOfDeath}</div>
+      <div class="summary-grid">
+        <div><div class="lbl">Hari hidup</div><div class="vl">${S.day}</div></div>
+        <div><div class="lbl">Net worth</div><div class="vl" style="color:${netWorth >= 0 ? 'var(--green)' : 'var(--red)'}">${rupiah(netWorth)}</div></div>
+        <div><div class="lbl">Kerjaan terakhir</div><div class="vl" style="font-size:13px">${PEKERJAAN.find(p => p.id === S.job)?.nama || '—'}</div></div>
+        <div><div class="lbl">Misi selesai</div><div class="vl">${S.completedMissions}</div></div>
+        <div><div class="lbl">Konten viral</div><div class="vl">${S.viralCounter}x</div></div>
+        <div><div class="lbl">Trauma</div><div class="vl">${Math.round(S.hidden.trauma)}</div></div>
+      </div>
+      <div style="background:var(--bg);padding:10px;border:2px solid var(--ink);margin-bottom:10px;font-size:11px;line-height:1.5">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;margin-bottom:4px">YANG DIWARISKAN KE GENERASI BERIKUT:</div>
+        <div>Trauma keluarga <strong>${S._inheritance.trauma}</strong> • Ordal <strong>${S._inheritance.ordal}</strong> • Beban <strong>${S._inheritance.family_burden}</strong></div>
+        <div>Hutang warisan ${rupiah(S._inheritance.inheritedDebt)} • Uang warisan ${rupiah(S._inheritance.inheritedMoney)}</div>
+      </div>
+      <div class="modal-choices">
+        <button class="modal-choice" id="next-gen-btn" style="background:var(--ink);color:var(--paper)">
+          <strong>Lanjut sebagai generasi ${S._inheritance.generation}</strong>
+          <span class="hint" style="color:rgba(245,239,225,0.7)">trauma diwariskan, cycle berulang</span>
+        </button>
+        <button class="modal-choice" id="full-reset-btn">
+          <strong>Mulai bersih (generasi 1)</strong>
+          <span class="hint">tanpa warisan apapun</span>
+        </button>
+      </div>
+    </div>`;
+  $('modal').classList.add('show');
+  const inheritance = S._inheritance;
+  // Persist the inheritance handoff IMMEDIATELY — if the player refreshes
+  // after death without picking a path, they still get the warisan flow.
+  savePendingInheritance(inheritance);
+  // Character save is now invalid (player is dead) — clear it.
+  clearSave();
+  setSavePill(null, '— ' + S.char.name + ' meninggal');
+  $('next-gen-btn').addEventListener('click', () => nextGeneration(inheritance));
+  $('full-reset-btn').addEventListener('click', resetGame);
+}
+
+function nextGeneration(inh) {
+  closeModal();
+  // generate new candidates but inject inheritance
+  S = null;
+  $('log').innerHTML = '';
+  $('actions').innerHTML = '';
+  $('mission-area').innerHTML = '';
+  modalOpen = true;
+  $('modal-content').classList.add('intro-modal');
+  const candidates = generateSpawnCandidates(4).map(c => ({ ...c, _inheritance: inh }));
+  renderIntro(candidates);
+  $('modal').classList.add('show');
+  // Inheritance will be baked into S the moment a card is clicked (newGame).
+  // We keep it in localStorage until then so a refresh on the spawn screen
+  // re-offers the same warisan instead of dropping it silently.
+}
+
+function generateObituary() {
+  if (S.causeOfDeath.includes('Burnout')) return pick([
+    'Bekerja terlalu keras untuk hidup yang tidak pernah dia jalani.',
+    'Mati di meja kerja, laptop masih nyala, Trello board kosong.',
+    'Kerja overtime selamanya kecuali untuk dirinya sendiri.'
+  ]);
+  if (S.causeOfDeath.includes('kelaparan')) return pick([
+    'Indonesia, negeri agraris katanya. Mati kelaparan beneran.',
+    'Saldo ATM kosong, perut kosong, harapan kosong.'
+  ]);
+  if (S.causeOfDeath.includes('Kesehatan')) return pick([
+    'Tubuh akhirnya menyerah setelah indomie + lembur tahunan.',
+    'BPJS udah lama nunggak, kena diabetes + asam urat sekaligus.'
+  ]);
+  if (S.causeOfDeath.includes('harapan')) return pick([
+    'Kadang yang bocor bukan atap, tapi hati.',
+    'Hidup terlalu berat untuk dipikul sendiri. Tidak ada yang lihat.'
+  ]);
+  return 'Begitu saja, tanpa pengumuman, tanpa caption sedih.';
+}
+
+// ============ RESET ============
+function confirmReset() {
+  if (!S) {
+    // No active char but reset clicked — wipe any stale save/inh too.
+    clearSave();
+    savePendingInheritance(null);
+    setSavePill(null, '— belum tersimpan');
+    startIntro();
+    return;
+  }
+  modalOpen = true;
+  $('modal-content').innerHTML = `
+    <div class="modal-title" style="color:var(--red)">RESET HIDUP?</div>
+    <div class="modal-sub">Hapus semua progress. Mulai dari awal dengan karakter random baru.</div>
+    <div class="modal-choices">
+      <button class="modal-choice" id="confirm-reset-yes" style="background:var(--red);color:var(--paper)">
+        <strong>Ya, reset semuanya</strong>
+        <span class="hint" style="color:rgba(245,239,225,0.7)">karakter, lokasi, hutang, semua hilang</span>
+      </button>
+      <button class="modal-choice" id="confirm-reset-no">
+        <strong>Batal</strong>
+      </button>
+    </div>`;
+  $('modal').classList.add('show');
+  $('confirm-reset-yes').addEventListener('click', resetGame);
+  $('confirm-reset-no').addEventListener('click', () => { closeModal(); render(); });
+}
+
+function resetGame() {
+  closeModal();
+  S = null;
+  // Persistence: full reset wipes everything — character AND pending warisan.
+  clearSave();
+  savePendingInheritance(null);
+  setSavePill(null, '— belum tersimpan');
+  // bersihkan UI
+  ['t-date','t-money','t-debt','t-stress','t-loc','char-name','char-meta','char-bg','char-class','log','news-feed','relations-list','debt-list','mission-list','mission-area','actions'].forEach(id => {
+    const el = $(id);
+    if (el) el.innerHTML = el.tagName === 'INPUT' ? '' : '—';
+  });
+  $('log').innerHTML = '';
+  $('actions').innerHTML = '';
+  $('mission-area').innerHTML = '';
+  startIntro();
+}
+
+// ============ INTRO / SPAWN ============
+function startIntro() {
+  modalOpen = true;
+  $('modal-content').classList.add('intro-modal');
+  // If there's a pending inheritance from a prior death (still in storage),
+  // inject it into the spawn candidates so the player picks up the warisan.
+  const pendingInh = loadPendingInheritance();
+  const candidates = generateSpawnCandidates(4);
+  if (pendingInh) candidates.forEach(c => c._inheritance = pendingInh);
+  renderIntro(candidates);
+  $('modal').classList.add('show');
+}
+
+function renderIntro(candidates) {
+  const inh = candidates[0] && candidates[0]._inheritance;
+  $('modal-content').innerHTML = `
+    <div class="modal-title">HIDUP <span>DI</span> KONOHA</div>
+    <div class="modal-sub">Simulator hidup di negeri kepulauan yang chaotic, lucu, terlalu relatable.</div>
+    <div style="font-size:11px;line-height:1.5;margin-bottom:14px">
+      Tidak ada win state. Bertahan, naik kelas, atau collapse. Pilih takdir awal di bawah — atau roll ulang sampai dapet yang lo mau.
+    </div>
+    ${inh ? `<div style="background:var(--ink);color:var(--paper);padding:8px 10px;margin-bottom:12px;font-size:10px;line-height:1.4;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--red)">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--gold)">GENERASI ${inh.generation} — keturunan ${inh.fromName}</div>
+      <div>Mewarisi trauma ${inh.trauma}, ordal ${inh.ordal}, beban ${inh.family_burden}${inh.inheritedDebt > 50000 ? ', hutang ' + rupiah(inh.inheritedDebt) : ''}${inh.inheritedMoney > 100000 ? ', uang ' + rupiah(inh.inheritedMoney) : ''}.</div>
+    </div>` : ''}
+    <div id="spawn-list"></div>
+    <button class="reroll-btn" id="reroll-btn">⟲ Roll ulang takdir</button>
+    <div style="font-size:9px;color:var(--ink-soft);margin-top:10px;letter-spacing:1px;text-align:center">v2 • progress auto-saved di browser • RESET untuk hapus</div>`;
+  $('spawn-list').innerHTML = candidates.map((c, i) => `
+    <div class="spawn-card" data-i="${i}">
+      <div class="spawn-name">${c.name}</div>
+      <div>
+        <span class="spawn-tag">${c.gender}</span>
+        <span class="spawn-tag">${c.umur} thn</span>
+        <span class="spawn-tag">hobi: ${c.hobi}</span>
+      </div>
+      <div class="spawn-loc"><strong>${c.bg.label}</strong> — ${c.kota} / ${c.neigh.label}</div>
+      <div class="spawn-quote">"${c.bg.quote}"</div>
+    </div>`).join('');
+  $('spawn-list').querySelectorAll('.spawn-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const i = +card.dataset.i;
+      $('modal').classList.remove('show');
+      $('modal-content').classList.remove('intro-modal');
+      modalOpen = false;
+      // Inheritance is now baked into the new S inside newGame — consume the
+      // pending-inh storage slot so it doesn't double-apply on next death.
+      if (candidates[i]._inheritance) savePendingInheritance(null);
+      newGame(candidates[i]);
+    });
+  });
+  $('reroll-btn').addEventListener('click', () => {
+    const newCandidates = generateSpawnCandidates(4);
+    if (candidates[0] && candidates[0]._inheritance) {
+      newCandidates.forEach(c => c._inheritance = candidates[0]._inheritance);
+    }
+    renderIntro(newCandidates);
+  });
+}
+
+$('logo').addEventListener('click', () => {
+  if (!S || S.dead) startIntro();
+});
+
+// keyboard: Escape closes panels/modals; Enter advances time
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if ($('panel-backdrop').classList.contains('show')) {
+      closeAllPanels();
+      e.preventDefault();
+    } else if (modalOpen && !$('modal-content').querySelector('.game-over') && !$('modal-content').classList.contains('intro-modal')) {
+      // only close cancellable modals (those with batal button visible)
+      const batal = $('modal-content').querySelector('.modal-choice[data-i="-1"]');
+      if (batal) { closeModal(); e.preventDefault(); }
+    }
+  }
+});
+
+// Flush any debounced save when the tab/page hides or closes.
+// pagehide fires reliably on mobile (background, swipe-close) where
+// beforeunload often does not.
+function flushSaveImmediately() {
+  if (!S || S.dead) return;
+  if (saveDebounceTimer) { clearTimeout(saveDebounceTimer); saveDebounceTimer = null; }
+  saveGame(true);
+}
+window.addEventListener('beforeunload', flushSaveImmediately);
+window.addEventListener('pagehide', flushSaveImmediately);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushSaveImmediately();
+});
+
+// ============ BOOT ============
+function bootGame() {
+  const saved = loadSavedGame();
+  if (saved && saved.S && !saved.S.dead) {
+    // Restore directly — full state is in S. Game continues from where
+    // the last render() autosaved.
+    try {
+      S = saved.S;
+      modalOpen = false;
+      $('modal').classList.remove('show');
+      $('modal-content').classList.remove('intro-modal');
+      render();
+      // Quick orientation toast so the player knows it's a resume.
+      showToast(
+        `Lanjut: ${S.char.name}`,
+        `Hari ${S.day} • ${S.lokasi.kota} • save ${formatSaveAge(saved.savedAt)}`
+      );
+      const ts = new Date(saved.savedAt);
+      const hh = String(ts.getHours()).padStart(2,'0');
+      const mm = String(ts.getMinutes()).padStart(2,'0');
+      setSavePill(null, `✓ tersimpan ${hh}:${mm}`);
+      return;
+    } catch (e) {
+      console.warn('restore failed, falling back to intro:', e);
+      clearSave();
+    }
+  }
+  // No save (or corrupt / character dead): normal intro flow,
+  // which itself will honor any pending inheritance still in storage.
+  startIntro();
+}
+
+bootGame();
+</script>
+</body>
+</html>
